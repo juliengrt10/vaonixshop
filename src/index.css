@@ -1,0 +1,236 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer base {
+  :root {
+    /* Brand colors (Vaonix) */
+    --brand: 262 86% 60%; /* Violet principal */
+    --brand-50: 262 86% 97%;
+    --brand-100: 262 86% 94%;
+    --brand-600: 262 70% 52%;
+    --brand-700: 262 60% 45%;
+    
+    /* Base colors */
+    --background: 0 0% 100%; /* White */
+    --foreground: 240 10% 10%; /* Dark text */
+    --muted: 240 4% 46%; /* Muted text */
+    --accent: 210 14% 95%; /* Light accent */
+    
+    /* Semantic colors (shadcn compatibility) */
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 10%;
+    --primary: 262 86% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 14% 95%;
+    --secondary-foreground: 240 10% 10%;
+    --muted-bg: 240 4% 96%;
+    --muted-foreground: 240 4% 46%;
+    --accent-bg: 210 14% 95%;
+    --accent-foreground: 240 10% 10%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    /* UI colors */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 262 86% 60%;
+    --radius: 0.75rem;
+    
+    /* Dark theme colors */
+    --dark-bg: 11 8% 4%; /* #0B0713 */
+    --dark-fg: 0 0% 100%;
+    
+    /* Gradients */
+    --gradient-brand: linear-gradient(135deg, hsl(262 86% 60%), hsl(262 70% 52%));
+    --gradient-hero: linear-gradient(135deg, hsl(262 86% 60% / 0.1), hsl(210 100% 50% / 0.1));
+    
+    /* Shadows */
+    --shadow-soft: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-brand: 0 4px 14px 0 hsl(262 86% 60% / 0.15);
+    
+    /* Animation */
+    --transition-fast: all 120ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: all 220ms cubic-bezier(0.4, 0, 0.2, 1);
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+@layer components {
+  /* Hero section with animated gradient background */
+  .hero-gradient {
+    background: var(--gradient-hero);
+    background-size: 400% 400%;
+    animation: gradient-flow 8s ease-in-out infinite;
+  }
+
+  /* Card components with Vaonix styling */
+  .vaonix-card {
+    background: var(--gradient-card);
+    box-shadow: var(--shadow-card);
+    border: 1px solid hsl(267 55% 90%);
+    transition: var(--transition-smooth);
+  }
+
+  .vaonix-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-violet);
+  }
+
+  /* Product cards with glow effects */
+  .product-card {
+    transition: var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .product-card:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-violet-glow);
+  }
+
+  /* Scroll reveal animations */
+  .scroll-reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .scroll-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Button variants */
+  .btn-hero {
+    background: var(--gradient-hero);
+    color: white;
+    border: none;
+    box-shadow: var(--shadow-violet);
+    transition: var(--transition-smooth);
+  }
+
+  .btn-hero:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-violet-glow);
+  }
+
+  /* Footer dark theme */
+  .footer-dark {
+    background: linear-gradient(135deg, #0b0713, #1a0f2e);
+    color: white;
+  }
+}
+
+@layer utilities {
+  /* Animation keyframes */
+  @keyframes gradient-flow {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  /* Utility classes */
+  .animate-fade-in-up {
+    animation: fade-in-up 0.6s ease-out;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .text-gradient {
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
