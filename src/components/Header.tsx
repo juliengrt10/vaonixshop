@@ -1,64 +1,66 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { siteConfig } from '@/config/site';
-import { track } from '@/lib/analytics';
-import { Menu, X, Phone } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
-import CartSidebar from '@/components/CartSidebar';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { siteConfig } from "@/config/site";
+import { track } from "@/lib/analytics";
+import { Menu, X, Phone } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import CartSidebar from "@/components/CartSidebar";
 
 export const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const scrollToSection = (sectionId: string) => {
-    if (location.pathname === '/') {
+    if (location.pathname === "/") {
       const element = document.getElementById(sectionId);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
         setIsMobileMenuOpen(false);
       }
     } else {
-      // Si on n'est pas sur la page d'accueil, rediriger vers la page d'accueil avec l'ancre
       window.location.href = `/#${sectionId}`;
     }
   };
 
   const handleCTAClick = () => {
-    track('cta_click', { location: 'header', action: 'demander_devis' });
-    scrollToSection('contact');
+    track("cta_click", { location: "header", action: "demander_devis" });
+    setIsMobileMenuOpen(false);
+    navigate("/contact");
   };
 
   const navItems = [
-    { label: 'Produits', href: '/produits', isRoute: true },
-    { label: 'À propos', href: '/a-propos', isRoute: true },
-    { label: 'Ressources', href: '/ressources', isRoute: true },
-    { label: 'Blog', href: '/blog', isRoute: true },
-    { label: 'Contact', href: '#contact', isRoute: false }
+    { label: "Produits", href: "/produits", isRoute: true },
+    { label: "À propos", href: "/a-propos", isRoute: true },
+    { label: "Ressources", href: "/ressources", isRoute: true },
+    { label: "Blog", href: "/blog", isRoute: true },
+    // Contact pointe désormais vers la page /contact
+    { label: "Contact", href: "/contact", isRoute: true },
   ];
 
   return (
-    <header 
+    <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-white/95 backdrop-blur-sm shadow-sm border-b border-border' 
-          : 'bg-transparent'
+        isScrolled
+          ? "bg-white/95 backdrop-blur-sm shadow-sm border-b border-border"
+          : "bg-transparent"
       }`}
     >
       <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center">
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             className="text-xl font-heading font-semibold text-foreground hover:text-brand transition-colors"
             aria-label="Retour à l'accueil"
           >
@@ -68,7 +70,7 @@ export const Header = () => {
 
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center space-x-8">
-          {navItems.map((item) => (
+          {navItems.map((item) =>
             item.isRoute ? (
               <Link
                 key={item.label}
@@ -80,18 +82,18 @@ export const Header = () => {
             ) : (
               <button
                 key={item.label}
-                onClick={() => scrollToSection(item.href.replace('#', ''))}
+                onClick={() => scrollToSection(item.href.replace("#", ""))}
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
                 {item.label}
               </button>
             )
-          ))}
+          )}
         </div>
 
         {/* Desktop Actions */}
         <div className="hidden lg:flex items-center space-x-4">
-          <a 
+          <a
             href={`tel:${siteConfig.contact.phone}`}
             className="flex items-center text-sm text-muted-foreground hover:text-brand transition-colors"
             aria-label={`Appeler ${siteConfig.contact.phone}`}
@@ -122,7 +124,7 @@ export const Header = () => {
       {isMobileMenuOpen && (
         <div className="lg:hidden bg-white border-b border-border shadow-lg">
           <div className="container mx-auto px-4 py-4 space-y-4">
-            {navItems.map((item) => (
+            {navItems.map((item) =>
               item.isRoute ? (
                 <Link
                   key={item.label}
@@ -135,15 +137,15 @@ export const Header = () => {
               ) : (
                 <button
                   key={item.label}
-                  onClick={() => scrollToSection(item.href.replace('#', ''))}
+                  onClick={() => scrollToSection(item.href.replace("#", ""))}
                   className="block w-full text-left text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2"
                 >
                   {item.label}
                 </button>
               )
-            ))}
+            )}
             <div className="pt-4 border-t border-border space-y-3">
-              <a 
+              <a
                 href={`tel:${siteConfig.contact.phone}`}
                 className="flex items-center text-sm text-muted-foreground hover:text-brand transition-colors"
               >
