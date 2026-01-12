@@ -1,6 +1,791 @@
 {
   "products": [
     {
+      "id": "cwdm-sfp-plus-10g-40km",
+      "handle": "cwdm-sfp-plus-10g-40km",
+      "pn": "VAO-SFP10G-CWDM40",
+      "title": "Module SFP+ 10G CWDM 40km (1270nm-1610nm)",
+      "platform": "SFP+",
+      "description": "Module optique SFP+ 10G CWDM 40km compatible avec les 18 longueurs d'onde standards.",
+      "form_factor": "SFP+",
+      "range": "40km",
+      "rate": "10.3125 Gb/s",
+      "speed": "10G",
+      "fiber": "Singlemode",
+      "application": "CWDM",
+      "price": 95,
+      "currency": "EUR",
+      "dom": "Oui",
+      "temp": "0°C à 70°C",
+      "power": "< 1.5W",
+      "images": [
+        "/images/products/sfp-base.png"
+      ],
+      "compatibility": [
+        "Cisco",
+        "Juniper",
+        "Generic"
+      ],
+      "certifications": [
+        "CE",
+        "RoHS"
+      ],
+      "stock_status": "in_stock",
+      "related_products": [
+        "dwdm-sfp-plus-10g-40km"
+      ],
+      "variants": [
+        {
+          "id": "v-1270",
+          "title": "1270nm",
+          "availableForSale": true
+        },
+        {
+          "id": "v-1290",
+          "title": "1290nm",
+          "availableForSale": true
+        },
+        {
+          "id": "v-1310",
+          "title": "1310nm",
+          "availableForSale": true
+        },
+        {
+          "id": "v-1330",
+          "title": "1330nm",
+          "availableForSale": true
+        },
+        {
+          "id": "v-1350",
+          "title": "1350nm",
+          "availableForSale": true
+        },
+        {
+          "id": "v-1370",
+          "title": "1370nm",
+          "availableForSale": true
+        },
+        {
+          "id": "v-1390",
+          "title": "1390nm",
+          "availableForSale": true
+        },
+        {
+          "id": "v-1410",
+          "title": "1410nm",
+          "availableForSale": true
+        },
+        {
+          "id": "v-1430",
+          "title": "1430nm",
+          "availableForSale": true
+        },
+        {
+          "id": "v-1450",
+          "title": "1450nm",
+          "availableForSale": true
+        },
+        {
+          "id": "v-1470",
+          "title": "1470nm",
+          "availableForSale": true
+        },
+        {
+          "id": "v-1490",
+          "title": "1490nm",
+          "availableForSale": true
+        },
+        {
+          "id": "v-1510",
+          "title": "1510nm",
+          "availableForSale": true
+        },
+        {
+          "id": "v-1530",
+          "title": "1530nm",
+          "availableForSale": true
+        },
+        {
+          "id": "v-1550",
+          "title": "1550nm",
+          "availableForSale": true
+        },
+        {
+          "id": "v-1570",
+          "title": "1570nm",
+          "availableForSale": true
+        },
+        {
+          "id": "v-1590",
+          "title": "1590nm",
+          "availableForSale": true
+        },
+        {
+          "id": "v-1610",
+          "title": "1610nm",
+          "availableForSale": true
+        }
+      ]
+    },
+    {
+      "id": "dac-sfp-plus-10g",
+      "handle": "dac-sfp-plus-10g",
+      "pn": "VAO-DAC10G",
+      "title": "Câble DAC SFP+ 10G Direct Attach",
+      "platform": "SFP+",
+      "description": "Câble de liaison directe DAC SFP+ 10G pour connexions switch-to-switch ou switch-to-server.",
+      "form_factor": "SFP+",
+      "range": "Variable",
+      "rate": "10.3125 Gb/s",
+      "speed": "10G",
+      "fiber": "Cuivre",
+      "application": "DAC",
+      "price": 15,
+      "currency": "EUR",
+      "dom": "Non",
+      "temp": "0°C à 70°C",
+      "power": "< 0.1W",
+      "images": [
+        "/images/products/sfp-base.png"
+      ],
+      "compatibility": [
+        "Cisco",
+        "Juniper",
+        "Arista",
+        "Dell"
+      ],
+      "certifications": [
+        "CE",
+        "RoHS"
+      ],
+      "stock_status": "in_stock",
+      "related_products": [
+        "sfp-10g-sr",
+        "dac-sfp28-25g"
+      ],
+      "variants": [
+        {
+          "id": "v-1m",
+          "title": "1m",
+          "availableForSale": true
+        },
+        {
+          "id": "v-2m",
+          "title": "2m",
+          "availableForSale": true
+        },
+        {
+          "id": "v-3m",
+          "title": "3m",
+          "availableForSale": true
+        },
+        {
+          "id": "v-5m",
+          "title": "5m",
+          "availableForSale": true
+        },
+        {
+          "id": "v-7m",
+          "title": "7m",
+          "availableForSale": true
+        },
+        {
+          "id": "v-10m",
+          "title": "10m",
+          "availableForSale": true
+        }
+      ]
+    },
+    {
+      "id": "dac-qsfp28-100g",
+      "handle": "dac-qsfp28-100g",
+      "pn": "VAO-DAC100G",
+      "title": "Câble DAC QSFP28 100G Direct Attach",
+      "platform": "QSFP28",
+      "description": "Câble de liaison directe DAC QSFP28 100G pour backbone datacenter.",
+      "form_factor": "QSFP28",
+      "range": "Variable",
+      "rate": "103.125 Gb/s",
+      "speed": "100G",
+      "fiber": "Cuivre",
+      "application": "DAC",
+      "price": 85,
+      "currency": "EUR",
+      "dom": "Non",
+      "temp": "0°C à 70°C",
+      "power": "< 0.5W",
+      "images": [
+        "/images/products/qsfp-base.png"
+      ],
+      "compatibility": [
+        "Cisco",
+        "Juniper",
+        "Arista",
+        "Mellanox"
+      ],
+      "certifications": [
+        "CE",
+        "RoHS"
+      ],
+      "stock_status": "in_stock",
+      "related_products": [
+        "qsfp-100g-sr4",
+        "dac-sfp-plus-10g"
+      ],
+      "variants": [
+        {
+          "id": "v100-1m",
+          "title": "1m",
+          "availableForSale": true
+        },
+        {
+          "id": "v100-2m",
+          "title": "2m",
+          "availableForSale": true
+        },
+        {
+          "id": "v100-3m",
+          "title": "3m",
+          "availableForSale": true
+        },
+        {
+          "id": "v100-5m",
+          "title": "5m",
+          "availableForSale": true
+        }
+      ]
+    },
+    {
+      "id": "sfp-10g-dwdm-40km",
+      "handle": "sfp-10g-dwdm-40km",
+      "pn": "VAO-SFP10G-DWDM-40",
+      "title": "Module SFP+ 10G DWDM 40km (Grille ITU 100GHz)",
+      "platform": "SFP+",
+      "description": "Module optique SFP+ 10G DWDM pour des distances jusqu'à 40km. Compatible avec la grille ITU 100GHz. Haute performance et fiabilité pour vos réseaux optiques longue distance.",
+      "form_factor": "SFP+",
+      "range": "40km",
+      "rate": "10.3125 Gb/s",
+      "speed": "10G",
+      "fiber": "Monomode",
+      "application": "DWDM",
+      "price": 350,
+      "currency": "EUR",
+      "dom": "Oui",
+      "temp": "0°C à 70°C",
+      "power": "< 2.5W",
+      "images": [
+        "/images/products/sfp-base.png"
+      ],
+      "compatibility": [
+        "Cisco",
+        "Juniper",
+        "Arista",
+        "Nokia",
+        "Dell"
+      ],
+      "certifications": [
+        "CE",
+        "RoHS"
+      ],
+      "stock_status": "in_stock",
+      "related_products": [
+        "sfp-10g-zr",
+        "sfp-10g-dwdm-80km"
+      ],
+      "variants": [
+        {
+          "id": "v-ch17",
+          "title": "CH17 (1563.86nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch18",
+          "title": "CH18 (1563.05nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch19",
+          "title": "CH19 (1562.23nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch20",
+          "title": "CH20 (1561.42nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch21",
+          "title": "CH21 (1560.61nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch22",
+          "title": "CH22 (1559.79nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch23",
+          "title": "CH23 (1558.98nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch24",
+          "title": "CH24 (1558.17nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch25",
+          "title": "CH25 (1557.36nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch26",
+          "title": "CH26 (1556.55nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch27",
+          "title": "CH27 (1555.75nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch28",
+          "title": "CH28 (1554.94nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch29",
+          "title": "CH29 (1554.13nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch30",
+          "title": "CH30 (1553.33nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch31",
+          "title": "CH31 (1552.52nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch32",
+          "title": "CH32 (1551.72nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch33",
+          "title": "CH33 (1550.92nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch34",
+          "title": "CH34 (1550.12nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch35",
+          "title": "CH35 (1549.32nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch36",
+          "title": "CH36 (1548.51nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch37",
+          "title": "CH37 (1547.72nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch38",
+          "title": "CH38 (1546.92nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch39",
+          "title": "CH39 (1546.12nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch40",
+          "title": "CH40 (1545.32nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch41",
+          "title": "CH41 (1544.53nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch42",
+          "title": "CH42 (1543.73nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch43",
+          "title": "CH43 (1542.94nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch44",
+          "title": "CH44 (1542.14nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch45",
+          "title": "CH45 (1541.35nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch46",
+          "title": "CH46 (1540.56nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch47",
+          "title": "CH47 (1539.77nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch48",
+          "title": "CH48 (1538.98nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch49",
+          "title": "CH49 (1538.19nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch50",
+          "title": "CH50 (1537.40nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch51",
+          "title": "CH51 (1536.61nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch52",
+          "title": "CH52 (1535.82nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch53",
+          "title": "CH53 (1535.04nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch54",
+          "title": "CH54 (1534.25nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch55",
+          "title": "CH55 (1533.47nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch56",
+          "title": "CH56 (1532.68nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch57",
+          "title": "CH57 (1531.90nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch58",
+          "title": "CH58 (1531.12nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch59",
+          "title": "CH59 (1530.33nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch60",
+          "title": "CH60 (1529.55nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v-ch61",
+          "title": "CH61 (1528.77nm)",
+          "availableForSale": true
+        }
+      ]
+    },
+    {
+      "id": "sfp-10g-dwdm-80km",
+      "handle": "sfp-10g-dwdm-80km",
+      "pn": "VAO-SFP10G-DWDM-80",
+      "title": "Module SFP+ 10G DWDM 80km (Grille ITU 100GHz)",
+      "platform": "SFP+",
+      "description": "Module optique SFP+ 10G DWDM haute performance pour très longue distance (80km). Supporte toute la grille ITU 100GHz. Idéal pour les liaisons métropolitaines et régionales.",
+      "form_factor": "SFP+",
+      "range": "80km",
+      "rate": "10.3125 Gb/s",
+      "speed": "10G",
+      "fiber": "Monomode",
+      "application": "DWDM",
+      "price": 550,
+      "currency": "EUR",
+      "dom": "Oui",
+      "temp": "0°C à 70°C",
+      "power": "< 3.0W",
+      "images": [
+        "/images/products/sfp-base.png"
+      ],
+      "compatibility": [
+        "Cisco",
+        "Juniper",
+        "Arista",
+        "Nokia",
+        "Dell"
+      ],
+      "certifications": [
+        "CE",
+        "RoHS"
+      ],
+      "stock_status": "in_stock",
+      "related_products": [
+        "sfp-10g-zr",
+        "sfp-10g-dwdm-40km"
+      ],
+      "variants": [
+        {
+          "id": "v80-ch17",
+          "title": "CH17 (1563.86nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch18",
+          "title": "CH18 (1563.05nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch19",
+          "title": "CH19 (1562.23nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch20",
+          "title": "CH20 (1561.42nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch21",
+          "title": "CH21 (1560.61nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch22",
+          "title": "CH22 (1559.79nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch23",
+          "title": "CH23 (1558.98nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch24",
+          "title": "CH24 (1558.17nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch25",
+          "title": "CH25 (1557.36nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch26",
+          "title": "CH26 (1556.55nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch27",
+          "title": "CH27 (1555.75nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch28",
+          "title": "CH28 (1554.94nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch29",
+          "title": "CH29 (1554.13nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch30",
+          "title": "CH30 (1553.33nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch31",
+          "title": "CH31 (1552.52nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch32",
+          "title": "CH32 (1551.72nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch33",
+          "title": "CH33 (1550.92nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch34",
+          "title": "CH34 (1550.12nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch35",
+          "title": "CH35 (1549.32nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch36",
+          "title": "CH36 (1548.51nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch37",
+          "title": "CH37 (1547.72nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch38",
+          "title": "CH38 (1546.92nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch39",
+          "title": "CH39 (1546.12nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch40",
+          "title": "CH40 (1545.32nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch41",
+          "title": "CH41 (1544.53nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch42",
+          "title": "CH42 (1543.73nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch43",
+          "title": "CH43 (1542.94nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch44",
+          "title": "CH44 (1542.14nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch45",
+          "title": "CH45 (1541.35nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch46",
+          "title": "CH46 (1540.56nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch47",
+          "title": "CH47 (1539.77nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch48",
+          "title": "CH48 (1538.98nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch49",
+          "title": "CH49 (1538.19nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch50",
+          "title": "CH50 (1537.40nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch51",
+          "title": "CH51 (1536.61nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch52",
+          "title": "CH52 (1535.82nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch53",
+          "title": "CH53 (1535.04nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch54",
+          "title": "CH54 (1534.25nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch55",
+          "title": "CH55 (1533.47nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch56",
+          "title": "CH56 (1532.68nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch57",
+          "title": "CH57 (1531.90nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch58",
+          "title": "CH58 (1531.12nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch59",
+          "title": "CH59 (1530.33nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch60",
+          "title": "CH60 (1529.55nm)",
+          "availableForSale": true
+        },
+        {
+          "id": "v80-ch61",
+          "title": "CH61 (1528.77nm)",
+          "availableForSale": true
+        }
+      ]
+    },
+    {
       "id": "sfp-1g-sx",
       "handle": "sfp-1g-sx",
       "pn": "VAO-SFP-1G-SX",
@@ -18,11 +803,25 @@
       "dom": "Non",
       "temp": "0°C à 70°C",
       "power": "< 1.0W",
-      "images": ["/images/products/sfp-1g-sx-front.jpg"],
-      "compatibility": ["Cisco", "Juniper", "HPE", "Dell", "Huawei"],
-      "certifications": ["CE", "RoHS"],
+      "images": [
+        "/images/products/sfp-1g-sx-front.jpg"
+      ],
+      "compatibility": [
+        "Cisco",
+        "Juniper",
+        "HPE",
+        "Dell",
+        "Huawei"
+      ],
+      "certifications": [
+        "CE",
+        "RoHS"
+      ],
       "stock_status": "in_stock",
-      "related_products": ["sfp-1g-lx", "sfp-10g-sr"]
+      "related_products": [
+        "sfp-1g-lx",
+        "sfp-10g-sr"
+      ]
     },
     {
       "id": "sfp-1g-lx",
@@ -42,11 +841,26 @@
       "dom": "Non",
       "temp": "0°C à 70°C",
       "power": "< 1.0W",
-      "images": ["/images/products/sfp-1g-lx-front.jpg"],
-      "compatibility": ["Cisco", "Juniper", "HPE", "Dell", "Arista", "Huawei"],
-      "certifications": ["CE", "RoHS"],
+      "images": [
+        "/images/products/sfp-1g-lx-front.jpg"
+      ],
+      "compatibility": [
+        "Cisco",
+        "Juniper",
+        "HPE",
+        "Dell",
+        "Arista",
+        "Huawei"
+      ],
+      "certifications": [
+        "CE",
+        "RoHS"
+      ],
       "stock_status": "in_stock",
-      "related_products": ["sfp-1g-sx", "sfp-1g-zx"]
+      "related_products": [
+        "sfp-1g-sx",
+        "sfp-1g-zx"
+      ]
     },
     {
       "id": "sfp-10g-sr",
@@ -66,11 +880,28 @@
       "dom": "Oui",
       "temp": "0°C à 70°C",
       "power": "< 1.0W",
-      "images": ["/images/products/sfp-10g-sr-front.jpg", "/images/products/sfp-10g-sr-side.jpg"],
-      "compatibility": ["Cisco", "Juniper", "HPE", "Dell", "Arista", "Huawei"],
-      "certifications": ["CE", "RoHS", "FCC"],
+      "images": [
+        "/images/products/sfp-10g-sr-front.jpg",
+        "/images/products/sfp-10g-sr-side.jpg"
+      ],
+      "compatibility": [
+        "Cisco",
+        "Juniper",
+        "HPE",
+        "Dell",
+        "Arista",
+        "Huawei"
+      ],
+      "certifications": [
+        "CE",
+        "RoHS",
+        "FCC"
+      ],
       "stock_status": "in_stock",
-      "related_products": ["sfp-10g-lr", "qsfp-40g-sr4"]
+      "related_products": [
+        "sfp-10g-lr",
+        "qsfp-40g-sr4"
+      ]
     },
     {
       "id": "sfp-10g-lr",
@@ -90,11 +921,28 @@
       "dom": "Oui",
       "temp": "0°C à 70°C",
       "power": "< 1.0W",
-      "images": ["/images/products/sfp-10g-lr-front.jpg", "/images/products/sfp-10g-lr-side.jpg"],
-      "compatibility": ["Cisco", "Juniper", "HPE", "Dell", "Arista", "Huawei"],
-      "certifications": ["CE", "RoHS", "FCC"],
+      "images": [
+        "/images/products/sfp-10g-lr-front.jpg",
+        "/images/products/sfp-10g-lr-side.jpg"
+      ],
+      "compatibility": [
+        "Cisco",
+        "Juniper",
+        "HPE",
+        "Dell",
+        "Arista",
+        "Huawei"
+      ],
+      "certifications": [
+        "CE",
+        "RoHS",
+        "FCC"
+      ],
       "stock_status": "in_stock",
-      "related_products": ["sfp-10g-sr", "sfp-10g-er"]
+      "related_products": [
+        "sfp-10g-sr",
+        "sfp-10g-er"
+      ]
     },
     {
       "id": "sfp-10g-zr",
@@ -114,11 +962,25 @@
       "dom": "Oui",
       "temp": "0°C à 70°C",
       "power": "< 2.0W",
-      "images": ["/images/products/sfp-10g-zr-front.jpg"],
-      "compatibility": ["Cisco", "Juniper", "HPE", "Arista"],
-      "certifications": ["CE", "RoHS", "FCC"],
+      "images": [
+        "/images/products/sfp-10g-zr-front.jpg"
+      ],
+      "compatibility": [
+        "Cisco",
+        "Juniper",
+        "HPE",
+        "Arista"
+      ],
+      "certifications": [
+        "CE",
+        "RoHS",
+        "FCC"
+      ],
       "stock_status": "in_stock",
-      "related_products": ["sfp-10g-lr", "sfp-10g-er"]
+      "related_products": [
+        "sfp-10g-lr",
+        "sfp-10g-er"
+      ]
     },
     {
       "id": "sfp-25g-sr",
@@ -138,11 +1000,27 @@
       "dom": "Oui",
       "temp": "0°C à 70°C",
       "power": "< 1.5W",
-      "images": ["/images/products/sfp-25g-sr-front.jpg"],
-      "compatibility": ["Cisco", "Juniper", "HPE", "Dell", "Arista", "Mellanox"],
-      "certifications": ["CE", "RoHS", "FCC"],
+      "images": [
+        "/images/products/sfp-25g-sr-front.jpg"
+      ],
+      "compatibility": [
+        "Cisco",
+        "Juniper",
+        "HPE",
+        "Dell",
+        "Arista",
+        "Mellanox"
+      ],
+      "certifications": [
+        "CE",
+        "RoHS",
+        "FCC"
+      ],
       "stock_status": "in_stock",
-      "related_products": ["sfp-25g-lr", "qsfp-100g-sr4"]
+      "related_products": [
+        "sfp-25g-lr",
+        "qsfp-100g-sr4"
+      ]
     },
     {
       "id": "sfp-25g-lr",
@@ -162,11 +1040,27 @@
       "dom": "Oui",
       "temp": "0°C à 70°C",
       "power": "< 1.5W",
-      "images": ["/images/products/sfp-25g-lr-front.jpg"],
-      "compatibility": ["Cisco", "Juniper", "HPE", "Dell", "Arista", "Mellanox"],
-      "certifications": ["CE", "RoHS", "FCC"],
+      "images": [
+        "/images/products/sfp-25g-lr-front.jpg"
+      ],
+      "compatibility": [
+        "Cisco",
+        "Juniper",
+        "HPE",
+        "Dell",
+        "Arista",
+        "Mellanox"
+      ],
+      "certifications": [
+        "CE",
+        "RoHS",
+        "FCC"
+      ],
       "stock_status": "in_stock",
-      "related_products": ["sfp-25g-sr", "sfp-25g-er"]
+      "related_products": [
+        "sfp-25g-sr",
+        "sfp-25g-er"
+      ]
     },
     {
       "id": "qsfp-40g-sr4",
@@ -186,11 +1080,27 @@
       "dom": "Oui",
       "temp": "0°C à 70°C",
       "power": "< 3.5W",
-      "images": ["/images/products/qsfp-40g-sr4-front.jpg"],
-      "compatibility": ["Cisco", "Juniper", "HPE", "Dell", "Arista", "Huawei"],
-      "certifications": ["CE", "RoHS", "FCC"],
+      "images": [
+        "/images/products/qsfp-40g-sr4-front.jpg"
+      ],
+      "compatibility": [
+        "Cisco",
+        "Juniper",
+        "HPE",
+        "Dell",
+        "Arista",
+        "Huawei"
+      ],
+      "certifications": [
+        "CE",
+        "RoHS",
+        "FCC"
+      ],
       "stock_status": "in_stock",
-      "related_products": ["qsfp-40g-lr4", "qsfp-100g-sr4"]
+      "related_products": [
+        "qsfp-40g-lr4",
+        "qsfp-100g-sr4"
+      ]
     },
     {
       "id": "qsfp-40g-lr4",
@@ -210,11 +1120,27 @@
       "dom": "Oui",
       "temp": "0°C à 70°C",
       "power": "< 3.5W",
-      "images": ["/images/products/qsfp-40g-lr4-front.jpg"],
-      "compatibility": ["Cisco", "Juniper", "HPE", "Dell", "Arista", "Huawei"],
-      "certifications": ["CE", "RoHS", "FCC"],
+      "images": [
+        "/images/products/qsfp-40g-lr4-front.jpg"
+      ],
+      "compatibility": [
+        "Cisco",
+        "Juniper",
+        "HPE",
+        "Dell",
+        "Arista",
+        "Huawei"
+      ],
+      "certifications": [
+        "CE",
+        "RoHS",
+        "FCC"
+      ],
       "stock_status": "in_stock",
-      "related_products": ["qsfp-40g-sr4", "qsfp-100g-lr4"]
+      "related_products": [
+        "qsfp-40g-sr4",
+        "qsfp-100g-lr4"
+      ]
     },
     {
       "id": "qsfp-100g-sr4",
@@ -234,11 +1160,27 @@
       "dom": "Oui",
       "temp": "0°C à 70°C",
       "power": "< 3.5W",
-      "images": ["/images/products/qsfp-100g-sr4-front.jpg"],
-      "compatibility": ["Cisco", "Juniper", "HPE", "Dell", "Arista", "Mellanox"],
-      "certifications": ["CE", "RoHS", "FCC"],
+      "images": [
+        "/images/products/qsfp-100g-sr4-front.jpg"
+      ],
+      "compatibility": [
+        "Cisco",
+        "Juniper",
+        "HPE",
+        "Dell",
+        "Arista",
+        "Mellanox"
+      ],
+      "certifications": [
+        "CE",
+        "RoHS",
+        "FCC"
+      ],
       "stock_status": "in_stock",
-      "related_products": ["qsfp-100g-lr4", "qsfp-40g-sr4"]
+      "related_products": [
+        "qsfp-100g-lr4",
+        "qsfp-40g-sr4"
+      ]
     },
     {
       "id": "qsfp-100g-lr4",
@@ -258,11 +1200,29 @@
       "dom": "Oui",
       "temp": "0°C à 70°C",
       "power": "< 3.5W",
-      "images": ["/images/products/qsfp-100g-lr4-front.jpg", "/images/products/qsfp-100g-lr4-side.jpg"],
-      "compatibility": ["Cisco", "Juniper", "HPE", "Dell", "Arista", "Huawei", "Mellanox"],
-      "certifications": ["CE", "RoHS", "FCC"],
+      "images": [
+        "/images/products/qsfp-100g-lr4-front.jpg",
+        "/images/products/qsfp-100g-lr4-side.jpg"
+      ],
+      "compatibility": [
+        "Cisco",
+        "Juniper",
+        "HPE",
+        "Dell",
+        "Arista",
+        "Huawei",
+        "Mellanox"
+      ],
+      "certifications": [
+        "CE",
+        "RoHS",
+        "FCC"
+      ],
       "stock_status": "in_stock",
-      "related_products": ["qsfp-100g-sr4", "qsfp-dd-400g-fr4"]
+      "related_products": [
+        "qsfp-100g-sr4",
+        "qsfp-dd-400g-fr4"
+      ]
     },
     {
       "id": "qsfp-100g-psm4",
@@ -282,11 +1242,26 @@
       "dom": "Oui",
       "temp": "0°C à 70°C",
       "power": "< 3.5W",
-      "images": ["/images/products/qsfp-100g-psm4-front.jpg"],
-      "compatibility": ["Cisco", "Juniper", "HPE", "Dell", "Arista"],
-      "certifications": ["CE", "RoHS", "FCC"],
+      "images": [
+        "/images/products/qsfp-100g-psm4-front.jpg"
+      ],
+      "compatibility": [
+        "Cisco",
+        "Juniper",
+        "HPE",
+        "Dell",
+        "Arista"
+      ],
+      "certifications": [
+        "CE",
+        "RoHS",
+        "FCC"
+      ],
       "stock_status": "in_stock",
-      "related_products": ["qsfp-100g-lr4", "qsfp-100g-sr4"]
+      "related_products": [
+        "qsfp-100g-lr4",
+        "qsfp-100g-sr4"
+      ]
     },
     {
       "id": "qsfp-dd-400g-sr8",
@@ -306,11 +1281,26 @@
       "dom": "Oui",
       "temp": "0°C à 70°C",
       "power": "< 12W",
-      "images": ["/images/products/qsfp-dd-400g-sr8-front.jpg"],
-      "compatibility": ["Cisco", "Juniper", "HPE", "Arista", "Mellanox"],
-      "certifications": ["CE", "RoHS", "FCC"],
+      "images": [
+        "/images/products/qsfp-dd-400g-sr8-front.jpg"
+      ],
+      "compatibility": [
+        "Cisco",
+        "Juniper",
+        "HPE",
+        "Arista",
+        "Mellanox"
+      ],
+      "certifications": [
+        "CE",
+        "RoHS",
+        "FCC"
+      ],
       "stock_status": "in_stock",
-      "related_products": ["qsfp-dd-400g-fr4", "qsfp-dd-400g-lr4"]
+      "related_products": [
+        "qsfp-dd-400g-fr4",
+        "qsfp-dd-400g-lr4"
+      ]
     },
     {
       "id": "qsfp-dd-400g-fr4",
@@ -330,11 +1320,27 @@
       "dom": "Oui",
       "temp": "0°C à 70°C",
       "power": "< 12W",
-      "images": ["/images/products/qsfp-dd-400g-fr4-front.jpg", "/images/products/qsfp-dd-400g-fr4-side.jpg"],
-      "compatibility": ["Cisco", "Juniper", "HPE", "Arista", "Mellanox"],
-      "certifications": ["CE", "RoHS", "FCC"],
+      "images": [
+        "/images/products/qsfp-dd-400g-fr4-front.jpg",
+        "/images/products/qsfp-dd-400g-fr4-side.jpg"
+      ],
+      "compatibility": [
+        "Cisco",
+        "Juniper",
+        "HPE",
+        "Arista",
+        "Mellanox"
+      ],
+      "certifications": [
+        "CE",
+        "RoHS",
+        "FCC"
+      ],
       "stock_status": "in_stock",
-      "related_products": ["qsfp-100g-lr4", "qsfp-dd-400g-dr4"]
+      "related_products": [
+        "qsfp-100g-lr4",
+        "qsfp-dd-400g-dr4"
+      ]
     },
     {
       "id": "qsfp-dd-400g-lr4",
@@ -354,34 +1360,126 @@
       "dom": "Oui",
       "temp": "0°C à 70°C",
       "power": "< 12W",
-      "images": ["/images/products/qsfp-dd-400g-lr4-front.jpg"],
-      "compatibility": ["Cisco", "Juniper", "HPE", "Arista"],
-      "certifications": ["CE", "RoHS", "FCC"],
+      "images": [
+        "/images/products/qsfp-dd-400g-lr4-front.jpg"
+      ],
+      "compatibility": [
+        "Cisco",
+        "Juniper",
+        "HPE",
+        "Arista"
+      ],
+      "certifications": [
+        "CE",
+        "RoHS",
+        "FCC"
+      ],
       "stock_status": "in_stock",
-      "related_products": ["qsfp-dd-400g-fr4", "qsfp-dd-400g-sr8"]
+      "related_products": [
+        "qsfp-dd-400g-fr4",
+        "qsfp-dd-400g-sr8"
+      ]
     }
   ],
   "filters": {
-    "speeds": ["1G", "10G", "25G", "40G", "100G", "400G"],
-    "form_factors": ["SFP", "SFP+", "SFP28", "QSFP+", "QSFP28", "QSFP-DD"],
-    "applications": ["SX", "LX", "SR", "LR", "ZR", "ER", "SR4", "LR4", "FR4", "PSM4", "SR8"],
-    "compatibility": ["Cisco", "Juniper", "HPE", "Dell", "Arista", "Huawei", "Mellanox"],
-    "fiber_types": ["Multimode", "Monomode"]
+    "speeds": [
+      "1G",
+      "10G",
+      "25G",
+      "40G",
+      "100G",
+      "400G"
+    ],
+    "form_factors": [
+      "SFP",
+      "SFP+",
+      "SFP28",
+      "QSFP+",
+      "QSFP28",
+      "QSFP-DD"
+    ],
+    "applications": [
+      "SX",
+      "LX",
+      "SR",
+      "LR",
+      "ZR",
+      "ER",
+      "SR4",
+      "LR4",
+      "FR4",
+      "PSM4",
+      "SR8"
+    ],
+    "compatibility": [
+      "Cisco",
+      "Juniper",
+      "HPE",
+      "Dell",
+      "Arista",
+      "Huawei",
+      "Mellanox"
+    ],
+    "fiber_types": [
+      "Multimode",
+      "Monomode"
+    ]
   },
   "brands": [
-    { "name": "Cisco", "logo": "/images/brands/cisco.svg" },
-    { "name": "Juniper", "logo": "/images/brands/juniper.svg" },
-    { "name": "HPE", "logo": "/images/brands/hpe.svg" },
-    { "name": "Dell", "logo": "/images/brands/dell.svg" },
-    { "name": "Arista", "logo": "/images/brands/arista.svg" },
-    { "name": "Huawei", "logo": "/images/brands/huawei.svg" },
-    { "name": "Mellanox", "logo": "/images/brands/mellanox.svg" }
+    {
+      "name": "Cisco",
+      "logo": "/images/brands/cisco.svg"
+    },
+    {
+      "name": "Juniper",
+      "logo": "/images/brands/juniper.svg"
+    },
+    {
+      "name": "HPE",
+      "logo": "/images/brands/hpe.svg"
+    },
+    {
+      "name": "Dell",
+      "logo": "/images/brands/dell.svg"
+    },
+    {
+      "name": "Arista",
+      "logo": "/images/brands/arista.svg"
+    },
+    {
+      "name": "Huawei",
+      "logo": "/images/brands/huawei.svg"
+    },
+    {
+      "name": "Mellanox",
+      "logo": "/images/brands/mellanox.svg"
+    }
   ],
   "categories": [
-    { "id": "sfp", "name": "SFP", "description": "Modules SFP 1 Gigabit" },
-    { "id": "sfp-plus", "name": "SFP+", "description": "Modules SFP+ 10 Gigabit" },
-    { "id": "sfp28", "name": "SFP28", "description": "Modules SFP28 25 Gigabit" },
-    { "id": "qsfp", "name": "QSFP/QSFP28", "description": "Modules QSFP 40G et 100G" },
-    { "id": "qsfp-dd", "name": "QSFP-DD", "description": "Modules QSFP-DD 400G+" }
+    {
+      "id": "sfp",
+      "name": "SFP",
+      "description": "Modules SFP 1 Gigabit"
+    },
+    {
+      "id": "sfp-plus",
+      "name": "SFP+",
+      "description": "Modules SFP+ 10 Gigabit"
+    },
+    {
+      "id": "sfp28",
+      "name": "SFP28",
+      "description": "Modules SFP28 25 Gigabit"
+    },
+    {
+      "id": "qsfp",
+      "name": "QSFP/QSFP28",
+      "description": "Modules QSFP 40G et 100G"
+    },
+    {
+      "id": "qsfp-dd",
+      "name": "QSFP-DD",
+      "description": "Modules QSFP-DD 400G+"
+    }
   ]
 }

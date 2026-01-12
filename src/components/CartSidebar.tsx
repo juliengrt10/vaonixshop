@@ -4,13 +4,15 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ShoppingCart, Plus, Minus, Trash2, ExternalLink } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, Trash2, ExternalLink, ShieldCheck } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { formatPrice } from '@/lib/utils';
 
 interface CartSidebarProps {
   children?: React.ReactNode;
 }
+
+
 
 const CartSidebar: React.FC<CartSidebarProps> = ({ children }) => {
   const {
@@ -33,7 +35,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ children }) => {
 
   const handleCheckout = () => {
     if (!checkoutUrl) return;
-    window.open(checkoutUrl, '_blank');
+    window.location.href = checkoutUrl;
   };
 
   return (
@@ -111,6 +113,16 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ children }) => {
                   <ExternalLink className="w-4 h-4 ml-2" />
                 </Button>
               </div>
+
+              {/* Reassurance Mini */}
+              <div className="mt-4 pt-4 border-t flex items-center justify-center gap-3 opacity-70">
+                <ShieldCheck className="w-4 h-4 text-green-600" />
+                <div className="flex gap-1">
+                  <span className="text-[10px] font-bold border rounded px-1 bg-white">VISA</span>
+                  <span className="text-[10px] font-bold border rounded px-1 bg-white">MC</span>
+                  <span className="text-[10px] font-bold border rounded px-1 bg-white">AMEX</span>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -127,8 +139,22 @@ interface CartItemProps {
 }
 
 const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQuantity, onRemove, loading }) => {
-  const { merchandise, cost } = item;
-  const product = merchandise.product;
+  const { merchandise, cost } = item || {};
+
+  if (!merchandise) {
+    console.error('🛒 CartItem: Missing merchandise data!', item);
+    return null;
+  }
+
+  const product = merchandise.product || { title: merchandise.title || 'Produit', handle: '' };
+
+  console.log('🛒 CartItem Render:', {
+    id: item.id,
+    title: product.title,
+    quantity: item.quantity,
+    isLocal: item.id?.startsWith('local-'),
+    hasPrice: !!merchandise.price
+  });
 
   // On privilégie le prix calculé par le panier (cost) plutôt que merchandise.price
   const rawUnitPrice =
@@ -136,7 +162,8 @@ const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQuantity, onRemove, l
     merchandise?.price?.amount ??
     '0';
 
-  const quantity = item.quantity ?? 1;
+  // FIX: Force quantity to at least 1 if it's 0 (which shouldn't happen but seems to be the case)
+  const quantity = (item.quantity && item.quantity > 0) ? item.quantity : 1;
 
   const unitPrice = parseFloat(rawUnitPrice) || 0;
 
@@ -144,14 +171,15 @@ const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQuantity, onRemove, l
     cost?.totalAmount?.amount ??
     String(unitPrice * quantity);
 
-  const lineTotal = parseFloat(rawLineTotal) || unitPrice * quantity;
+  const lineTotal = parseFloat(rawLineTotal) || 0;
+  const featuredImage = product.featuredImage?.url || merchandise.image?.url || '';
 
   return (
     <div className="flex gap-3 p-3 rounded-lg border">
-      {product.featuredImage && (
+      {featuredImage && (
         <img
-          src={product.featuredImage.url}
-          alt={product.featuredImage.altText || product.title}
+          src={featuredImage}
+          alt={product.featuredImage?.altText || product.title}
           className="w-16 h-16 object-cover rounded-md"
         />
       )}

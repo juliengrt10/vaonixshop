@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { useShopifyCart } from '@/hooks/useShopifyCart';
 import { trackAddToCart, trackBeginCheckout } from '@/lib/analytics';
 
@@ -34,14 +34,14 @@ interface CartProviderProps {
 
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
-  
+
   const {
-    cart,
+    cart: shopifyCart,
     loading,
     error,
-    addToCart,
-    updateCartLine,
-    removeFromCart,
+    addToCart: addToShopify,
+    updateCartLine: updateShopifyLine,
+    removeFromCart: removeFromShopify,
     totalItems,
     totalPrice,
     checkoutUrl,
@@ -50,22 +50,33 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
-  
-  // Wrapper pour addToCart avec tracking
+
+  // Simple wrapper for addToCart with tracking and auto-open
   const addToCartWithTracking = async (variantId: string, quantity: number = 1, productData?: any) => {
-    await addToCart(variantId, quantity, productData);
-    if (productData) {
-      trackAddToCart(productData.id, productData.title, productData.price);
+    console.log('🛒 addToCart called:', { variantId, quantity, productData });
+
+    try {
+      await addToShopify(variantId, quantity, productData);
+      console.log('🛒 Shopify add successful');
+
+      if (productData) {
+        trackAddToCart(productData.id, productData.title, productData.price);
+      }
+
+      openCart();
+    } catch (err) {
+      console.error('🛒 Shopify add failed:', err);
+      throw err;
     }
   };
 
   const value: CartContextType = {
-    cart,
+    cart: shopifyCart,
     loading,
     error,
     addToCart: addToCartWithTracking,
-    updateCartLine,
-    removeFromCart,
+    updateCartLine: updateShopifyLine,
+    removeFromCart: removeFromShopify,
     totalItems,
     totalPrice,
     checkoutUrl,

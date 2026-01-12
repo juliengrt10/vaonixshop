@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { shopifyClient, type ShopifyProduct, type ShopifyCollection } from '@/lib/shopify';
+import { storefrontRequest, type ShopifyProduct, type ShopifyCollection } from '@/lib/shopify';
 import { GET_COLLECTION_PRODUCTS, GET_PRODUCT_BY_HANDLE, SEARCH_PRODUCTS } from '@/lib/shopify-queries';
 import { siteConfig } from '@/config/site';
 
@@ -21,7 +21,7 @@ export const useShopifyProducts = (options: UseShopifyProductsOptions = {}) => {
   const { collection, first = 50, search, query } = options;
 
   const fetchProducts = async () => {
-    if (!siteConfig.shopify.enabled || !siteConfig.shopify.domain || !shopifyClient) {
+    if (!siteConfig.shopify.enabled || !siteConfig.shopify.domain) {
       console.warn('Shopify not configured, using mock data');
       return;
     }
@@ -46,8 +46,9 @@ export const useShopifyProducts = (options: UseShopifyProductsOptions = {}) => {
       }
 
       if (gqlQuery) {
-        const response = await shopifyClient.request(gqlQuery, { variables });
-        
+        // Use the centralized storefrontRequest which handles retries and basic error checking
+        const response: any = await storefrontRequest(gqlQuery, variables);
+
         if (query || search) {
           const productsData = response.data?.products?.edges?.map((edge: any) => edge.node) || [];
           setProducts(productsData);
@@ -61,8 +62,10 @@ export const useShopifyProducts = (options: UseShopifyProductsOptions = {}) => {
         }
       }
     } catch (err) {
+      // The error is already logged in storefrontRequest, but we can log context here
       console.error('Error fetching Shopify products:', err);
-      setError('Erreur lors du chargement des produits');
+      // More user-friendly error message could be derived from err if needed
+      setError('Impossible de charger les produits. Veuillez vérifier votre connexion.');
     } finally {
       setLoading(false);
     }
@@ -70,7 +73,7 @@ export const useShopifyProducts = (options: UseShopifyProductsOptions = {}) => {
 
   // Fonction pour charger plus de produits (pagination)
   const loadMore = async () => {
-    if (!endCursor || !hasNextPage || isLoadingMore || !siteConfig.shopify.enabled || !shopifyClient) {
+    if (!endCursor || !hasNextPage || isLoadingMore || !siteConfig.shopify.enabled) {
       return;
     }
 
@@ -92,8 +95,8 @@ export const useShopifyProducts = (options: UseShopifyProductsOptions = {}) => {
       }
 
       if (gqlQuery) {
-        const response = await shopifyClient.request(gqlQuery, { variables });
-        
+        const response: any = await storefrontRequest(gqlQuery, variables);
+
         if (query || search) {
           const newProducts = response.data?.products?.edges?.map((edge: any) => edge.node) || [];
           setProducts(prev => [...prev, ...newProducts]);
@@ -137,7 +140,7 @@ export const useShopifyProduct = (handle: string) => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchProduct = async () => {
-    if (!handle || !siteConfig.shopify.enabled || !siteConfig.shopify.domain || !shopifyClient) {
+    if (!handle || !siteConfig.shopify.enabled || !siteConfig.shopify.domain) {
       return;
     }
 
@@ -145,14 +148,14 @@ export const useShopifyProduct = (handle: string) => {
     setError(null);
 
     try {
-      const response = await shopifyClient.request(GET_PRODUCT_BY_HANDLE, {
-        variables: { handle }
+      const response: any = await storefrontRequest(GET_PRODUCT_BY_HANDLE, {
+        handle
       });
 
       setProduct(response.data?.product || null);
     } catch (err) {
       console.error('Error fetching Shopify product:', err);
-      setError('Erreur lors du chargement du produit');
+      setError('Impossible de charger le produit. Veuillez réactualiser.');
     } finally {
       setLoading(false);
     }
@@ -174,7 +177,7 @@ export const useShopifyProduct = (handle: string) => {
 export const mapShopifyProduct = (shopifyProduct: ShopifyProduct) => {
   const firstImage = shopifyProduct.images.edges[0]?.node;
   const firstVariant = shopifyProduct.variants.edges[0]?.node;
-  
+
   // Extraire les metafields
   const metafields = shopifyProduct.metafields.reduce((acc, field) => {
     if (field) {
@@ -194,7 +197,7 @@ export const mapShopifyProduct = (shopifyProduct: ShopifyProduct) => {
     imageAlt: firstImage?.altText || shopifyProduct.title,
     inStock: firstVariant?.availableForSale || false,
     stockQuantity: firstVariant?.quantityAvailable || 0,
-    
+
     // Mapping des metafields vers le format attendu
     compatibility: metafields.compatibility?.split(',').map(s => s.trim()) || [],
     formFactor: metafields.form_factor || '',
@@ -206,7 +209,7 @@ export const mapShopifyProduct = (shopifyProduct: ShopifyProduct) => {
     temperature: metafields.temperature || '',
     powerConsumption: metafields.power_consumption || '',
     certifications: metafields.certifications?.split(',').map(s => s.trim()) || [],
-    
+
     // Données Shopify originales pour référence
     shopifyData: shopifyProduct
   };

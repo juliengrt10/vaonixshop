@@ -1,10 +1,24 @@
 import { useState, useEffect, useCallback } from 'react';
-import { shopifyClient, type ShopifyCart, type CartItem } from '@/lib/shopify';
+import { storefrontRequest, type ShopifyCart, type CartItem } from '@/lib/shopify';
 import { CREATE_CART, ADD_TO_CART, UPDATE_CART_LINES, REMOVE_FROM_CART, GET_CART } from '@/lib/shopify-queries';
 import { siteConfig } from '@/config/site';
 import { track } from '@/lib/analytics';
+import { retryAsync } from '@/lib/retry';
 
 const CART_STORAGE_KEY = 'shopify_cart_id';
+
+// Helper to remove invalid lines (quantity <= 0)
+const sanitizeCart = (cart: ShopifyCart): ShopifyCart => {
+  if (!cart?.lines?.edges) return cart;
+  const validEdges = cart.lines.edges.filter(edge => edge.node.quantity > 0);
+  return {
+    ...cart,
+    lines: {
+      ...cart.lines,
+      edges: validEdges
+    }
+  };
+};
 
 export const useShopifyCart = () => {
   const [cart, setCart] = useState<ShopifyCart | null>(null);
@@ -13,21 +27,19 @@ export const useShopifyCart = () => {
 
   // Créer un nouveau panier
   const createCart = async () => {
-    if (!siteConfig.shopify.enabled || !shopifyClient) return null;
+    if (!siteConfig.shopify.enabled) return null;
 
     try {
-      const response = await shopifyClient.request(CREATE_CART, {
-        variables: {
-          input: {
-            lines: []
-          }
+      const response: any = await storefrontRequest(CREATE_CART, {
+        input: {
+          lines: []
         }
       });
 
       const newCart = response.data?.cartCreate?.cart;
       if (newCart) {
         localStorage.setItem(CART_STORAGE_KEY, newCart.id);
-        setCart(newCart);
+        setCart(sanitizeCart(newCart));
         return newCart;
       }
     } catch (err) {
@@ -39,16 +51,14 @@ export const useShopifyCart = () => {
 
   // Récupérer le panier existant
   const fetchCart = async (cartId: string) => {
-    if (!siteConfig.shopify.enabled || !shopifyClient) return null;
+    if (!siteConfig.shopify.enabled) return null;
 
     try {
-      const response = await shopifyClient.request(GET_CART, {
-        variables: { id: cartId }
-      });
+      const response: any = await storefrontRequest(GET_CART, { id: cartId });
 
       const fetchedCart = response.data?.cart;
       if (fetchedCart) {
-        setCart(fetchedCart);
+        setCart(sanitizeCart(fetchedCart));
         return fetchedCart;
       }
     } catch (err) {
@@ -63,7 +73,7 @@ export const useShopifyCart = () => {
   // Initialiser le panier au chargement
   useEffect(() => {
     const initCart = async () => {
-      if (!siteConfig.shopify.enabled || !shopifyClient) return;
+      if (!siteConfig.shopify.enabled) return;
 
       const existingCartId = localStorage.getItem(CART_STORAGE_KEY);
       if (existingCartId) {
@@ -78,34 +88,34 @@ export const useShopifyCart = () => {
 
   // Ajouter un produit au panier
   const addToCart = useCallback(async (variantId: string, quantity: number = 1, productData?: any) => {
-    if (!siteConfig.shopify.enabled || !shopifyClient) return;
+    if (!siteConfig.shopify.enabled) return;
 
     setLoading(true);
     setError(null);
 
     try {
       let currentCart = cart;
-      
+
       // Créer un panier si nécessaire
       if (!currentCart) {
         currentCart = await createCart();
         if (!currentCart) return;
       }
 
-      const response = await shopifyClient.request(ADD_TO_CART, {
-        variables: {
-          cartId: currentCart.id,
-          lines: [{
-            merchandiseId: variantId,
-            quantity
-          }]
-        }
+      const response: any = await storefrontRequest(ADD_TO_CART, {
+        cartId: currentCart.id,
+        lines: [{
+          merchandiseId: variantId,
+          quantity
+        }]
       });
 
       const updatedCart = response.data?.cartLinesAdd?.cart;
       if (updatedCart) {
-        setCart(updatedCart);
-        
+        const cleaned = sanitizeCart(updatedCart);
+        console.log('🛒 Cart after addToCart:', cleaned);
+        setCart(cleaned);
+
         // Analytics
         if (productData) {
           track('add_to_cart', {
@@ -120,7 +130,7 @@ export const useShopifyCart = () => {
 
       const errors = response.data?.cartLinesAdd?.userErrors;
       if (errors && errors.length > 0) {
-        setError(errors[0].message);
+        throw new Error(errors[0].message);
       }
     } catch (err) {
       console.error('Error adding to cart:', err);
@@ -132,30 +142,28 @@ export const useShopifyCart = () => {
 
   // Mettre à jour la quantité d'un article
   const updateCartLine = useCallback(async (lineId: string, quantity: number) => {
-    if (!cart || !siteConfig.shopify.enabled || !shopifyClient) return;
+    if (!cart || !siteConfig.shopify.enabled) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      const response = await shopifyClient.request(UPDATE_CART_LINES, {
-        variables: {
-          cartId: cart.id,
-          lines: [{
-            id: lineId,
-            quantity
-          }]
-        }
+      const response: any = await storefrontRequest(UPDATE_CART_LINES, {
+        cartId: cart.id,
+        lines: [{
+          id: lineId,
+          quantity
+        }]
       });
 
       const updatedCart = response.data?.cartLinesUpdate?.cart;
       if (updatedCart) {
-        setCart(updatedCart);
+        setCart(sanitizeCart(updatedCart));
       }
 
       const errors = response.data?.cartLinesUpdate?.userErrors;
       if (errors && errors.length > 0) {
-        setError(errors[0].message);
+        throw new Error(errors[0].message);
       }
     } catch (err) {
       console.error('Error updating cart line:', err);
@@ -167,27 +175,25 @@ export const useShopifyCart = () => {
 
   // Supprimer un article du panier
   const removeFromCart = useCallback(async (lineId: string) => {
-    if (!cart || !siteConfig.shopify.enabled || !shopifyClient) return;
+    if (!cart || !siteConfig.shopify.enabled) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      const response = await shopifyClient.request(REMOVE_FROM_CART, {
-        variables: {
-          cartId: cart.id,
-          lineIds: [lineId]
-        }
+      const response: any = await storefrontRequest(REMOVE_FROM_CART, {
+        cartId: cart.id,
+        lineIds: [lineId]
       });
 
       const updatedCart = response.data?.cartLinesRemove?.cart;
       if (updatedCart) {
-        setCart(updatedCart);
+        setCart(sanitizeCart(updatedCart));
       }
 
       const errors = response.data?.cartLinesRemove?.userErrors;
       if (errors && errors.length > 0) {
-        setError(errors[0].message);
+        throw new Error(errors[0].message);
       }
     } catch (err) {
       console.error('Error removing from cart:', err);

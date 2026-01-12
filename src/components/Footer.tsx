@@ -1,10 +1,11 @@
 import { Shield, Award, Phone, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
+import { siteConfig } from "@/config/site";
 
 // Footer component for Vaonix site
 
-const CONTACT_EMAIL = "contact@infractive.com";
-const CONTACT_PHONE_DISPLAY = "+33 (0)1 75 49 81 30"; // texte affiché
+const CONTACT_EMAIL = siteConfig.contact.email;
+const CONTACT_PHONE_DISPLAY = siteConfig.contact.phone; // texte affiché
 const CONTACT_PHONE_TEL = "+33175498130"; // format tel:
 const CONTACT_HOURS = "Lun–Ven 9h–18h";
 
@@ -24,7 +25,7 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           {/* Logo and description */}
           <div className="md:col-span-2">
-            <h3 className="text-3xl font-bold text-gradient mb-4">Vaonix</h3>
+            <img src="/images/vaonix-logo.png" alt="Vaonix" className="h-14 mb-5" />
             <p className="text-gray-300 leading-relaxed mb-6 max-w-md">
               Spécialiste européen des modules optiques pour infrastructures réseau.
               Compatibilité garantie, qualité certifiée, support technique expert.

@@ -10,12 +10,12 @@ const HeroSection = () => {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Animated gradient background */}
       <div className="absolute inset-0 hero-gradient opacity-20"></div>
-      
+
       {/* Background image with overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/70 to-background/90">
-        <img 
-          src={heroModules} 
-          alt="Optical modules" 
+        <img
+          src={heroModules}
+          alt="Optical modules"
           className="w-full h-full object-cover opacity-30"
         />
       </div>
@@ -26,24 +26,24 @@ const HeroSection = () => {
           <p className="text-sm font-medium tracking-wide text-primary/80 uppercase">
             Modules optiques
           </p>
-          
+
           {/* Main title */}
           <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-            <span className="text-gradient">Vaonix</span> — Modules 
+            <img src="/images/vaonix-logo.png" alt="Vaonix" className="h-[1em] w-auto inline-block align-middle mr-2 -mt-2" /> — Modules
             <br className="hidden md:block" />
             SFP, SFP+, QSFP, QSFP-DD
           </h1>
-          
+
           {/* Subheading */}
           <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Performance, compatibilité multi-constructeurs, stock européen et support technique.
           </p>
-          
+
           {/* CTA button */}
           <div className="pt-4">
-            <Button 
-              variant="hero" 
-              size="lg" 
+            <Button
+              variant="hero"
+              size="lg"
               className="text-lg px-8 py-6 rounded-xl group"
               onClick={() => navigate('/produits')}
             >

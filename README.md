@@ -1,73 +1,63 @@
-# Welcome to your Lovable project
+# Vaonix Shop
 
-## Project info
+La boutique moderne pour modules optiques SFP, SFP+, QSFP.
 
-**URL**: https://lovable.dev/projects/3470266f-f311-49e4-8028-4a5c1453e2a1
+## 🚀 Technologies
 
-## How can I edit this code?
+- **Framework** : React + Vite
+- **Langage** : TypeScript
+- **Styling** : TailwindCSS + Shadcn/UI (Variables CSS)
+- **State** : TanStack Query
+- **SEO** : React Helmet Async + Sitemap dynamique
 
-There are several ways of editing your application.
+## 🛠️ Installation
 
-**Use Lovable**
+```bash
+npm install
+```
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/3470266f-f311-49e4-8028-4a5c1453e2a1) and start prompting.
+## 🏃‍♂️ Développement
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## 🏗️ Build & Production
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+npm run build
+```
 
-**Use GitHub Codespaces**
+## 🧪 Tests
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Le projet utilise **Vitest** pour les tests unitaires.
 
-## What technologies are used for this project?
+```bash
+npm install -D vitest
+npm run test
+```
 
-This project is built with:
+## 🔍 Architecture
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- `src/components` : Composants UI réutilisables.
+- `src/pages` : Pages de l'application (Routing).
+- `src/lib` : Utilitaires et logique métier (ex: `productMapper.ts`).
+- `src/hooks` : Hooks personnalisés (ex: `useShopifyProducts`).
+- `scripts` : Scripts utilitaires (Génération Sitemap, CSV, etc.).
 
-## How can I deploy this project?
+## 🌍 SEO
 
-Simply open [Lovable](https://lovable.dev/projects/3470266f-f311-49e4-8028-4a5c1453e2a1) and click on Share -> Publish.
+Le sitemap est généré automatiquement via le script :
+```bash
+node scripts/generate-sitemap.js
+```
+Il se base sur `products_master.csv` pour lister tous les produits.
 
-## Can I connect a custom domain to my Lovable project?
+## 🎨 Design System
 
-Yes, you can!
+Le design utilise une palette **Zinc + Violet (Brand)** définie dans `src/index.css`.
+Le **Mode Sombre** est supporté nativement (`class="dark"`).
+Les icônes proviennent de `lucide-react`.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+---
+© 2025 Vaonix

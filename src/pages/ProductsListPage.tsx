@@ -1,4 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
+import { QuickViewModal } from '@/components/QuickViewModal';
+import { ProductSkeleton } from '@/components/ProductSkeleton';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Header } from '@/components/Header';
@@ -12,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Grid, List, ShoppingCart, ShoppingBag, Eye, Search, Filter, X, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import productsData from '@/config/products.example.json';
@@ -22,130 +25,159 @@ import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useCart } from '@/context/CartContext';
 import { formatPrice } from '@/lib/utils';
 import { mapShopifyToUnified, mapMockToUnified, type UnifiedProduct } from '@/lib/productMapper';
-import { getCategoryShopifyQuery, PRODUCT_CATEGORIES } from '@/config/categories';
+import { getCategoryShopifyQuery, getSegmentShopifyQuery, PRODUCT_CATEGORIES } from '@/config/categories';
+import { isOptionDisabled } from '@/config/filter-logic';
+import { DynamicProductImage } from '@/components/DynamicProductImage';
 
 type ViewMode = 'table' | 'cards';
 type Product = UnifiedProduct;
 
 // Configuration des filtres disponibles
+// Configuration des filtres disponibles
 const FILTER_CONFIG = {
   ff: {
-    title: 'Form Factor', 
-    options: ['sfp', 'sfp+', 'qsfp', 'qsfp-dd'],
-    icon: '🔌'
+    title: 'Form Factor',
+    options: ['QSFP-DD', 'QSFP28', 'QSFP+', 'SFP28', 'SFP+', 'SFP', 'OSFP', 'CFP2'],
+    prefix: 'FormFactor_'
   },
   rate: {
     title: 'Débit',
-    options: ['1g', '10g', '25g', '40g', '100g', '200g', '400g'],
-    icon: '⚡'
+    options: ['1.6T', '800G', '400G', '200G', '100G', '50G', '40G', '25G', '10G', '1G'],
+    prefix: 'Speed_'
   },
-  app: {
+  dist: {
+    title: 'Distance',
+    options: ['100m', '300m', '500m', '2km', '10km', '20km', '40km', '80km', '100km', '120km'],
+    prefix: 'Distance_'
+  },
+  tech: {
     title: 'Application',
-    options: ['sr', 'lr', 'er', 'zx', 'bx-u', 'bx-d', 'lx', 'ex'],
-    icon: '📡'
+    options: ['DWDM', 'CWDM', 'BiDi', 'Tunable', 'DAC', 'AOC'],
+    prefix: 'Tech_'
   }
 };
+
+const POPULAR_RATES = ['1G', '10G', '25G', '40G', '100G', '400G'];
 
 export default function ProductsListPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState<ViewMode>('table');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  
-  const { addToCart: addToShopifyCart, isEnabled: cartEnabled } = useCart();
+
+  const { addToCart: addToShopifyCart, isEnabled: cartEnabled, openCart } = useCart();
 
   // État depuis l'URL
   const searchQuery = searchParams.get('q') || '';
   const sortBy = searchParams.get('sort') || 'title';
   const categoryId = searchParams.get('category') || '';
-  
+  const segmentId = searchParams.get('segment') || '';
+
   const activeFilters = {
     ff: getParamArray(searchParams, 'ff'),
     rate: getParamArray(searchParams, 'rate'),
-    app: getParamArray(searchParams, 'app')
+    dist: getParamArray(searchParams, 'dist'),
+    tech: getParamArray(searchParams, 'tech')
   };
 
-  // Trouver la catégorie actuelle pour afficher le titre
+  // Trouver la catégorie actuelle ou segment pour afficher le titre
   const currentCategory = useMemo(() => {
-    if (!categoryId) return null;
-    for (const cat of PRODUCT_CATEGORIES) {
-      if (cat.subcategories) {
-        const subcat = cat.subcategories.find(s => s.id === categoryId);
-        if (subcat) return { parent: cat.name, current: subcat.name };
+    if (categoryId) {
+      for (const cat of PRODUCT_CATEGORIES) {
+        if (cat.subcategories) {
+          const subcat = cat.subcategories.find(s => s.id === categoryId);
+          if (subcat) return { parent: cat.name, current: subcat.name };
+        }
       }
     }
+
+    if (segmentId) {
+      const family = {
+        'modules-ethernet': 'Modules optiques Ethernet',
+        'cables-dac-aoc': 'Câbles DAC / AOC',
+        'transmission-optique': 'Transmission optique & DWDM',
+        'infiniband-hpc': 'InfiniBand & HPC'
+      }[segmentId];
+      if (family) return { parent: 'Produits', current: family };
+    }
+
     return null;
-  }, [categoryId]);
+  }, [categoryId, segmentId]);
 
   // Construire la query Shopify dynamique basée sur les filtres
   const shopifyQuery = useMemo(() => {
     const filters: string[] = [];
-    
-    // Si une catégorie est sélectionnée, utiliser son mapping
+
+    // Priorité 1: Sous-catégorie spécifique
     if (categoryId) {
       const categoryQuery = getCategoryShopifyQuery(categoryId);
-      if (categoryQuery) {
-        filters.push(categoryQuery);
-      }
+      if (categoryQuery) filters.push(categoryQuery);
     }
-    
-    // Form Factor (product_type dans Shopify) - Mapping exact avec guillemets pour caractères spéciaux
+    // Priorité 2: Filtre par Segment (Grande famille)
+    else if (segmentId) {
+      const segmentQuery = getSegmentShopifyQuery(segmentId);
+      if (segmentQuery) filters.push(segmentQuery);
+    }
+
+    // Form Factor (tags structurés)
+
     if (activeFilters.ff.length > 0) {
-      const productTypeMap: Record<string, string> = {
-        'sfp': 'product_type:"SFP"',
-        'sfp+': 'product_type:"SFP+"',
-        'sfp28': 'product_type:"SFP28"',
-        'qsfp': 'product_type:"QSFP"',
-        'qsfp+': 'product_type:"QSFP+"',
-        'qsfp28': 'product_type:"QSFP28"',
-        'qsfp-dd': 'product_type:"QSFP-DD"',
-        'xfp': 'product_type:"XFP"',
-        'csfp': 'product_type:"CSFP"'
-      };
-      
-      const ffFilters = activeFilters.ff
-        .map(ff => productTypeMap[ff.toLowerCase()])
-        .filter(Boolean);
-      
-      if (ffFilters.length > 0) {
-        filters.push(`(${ffFilters.join(' OR ')})`);
-      }
+      const ffFilters = activeFilters.ff.map(ff => `tag:"FormFactor_${ff}"`);
+      filters.push(`(${ffFilters.join(' OR ')})`);
     }
-    
-    // Débit (tags dans Shopify) - Avec guillemets pour plus de précision
+
+    // Débit (tags structurés)
     if (activeFilters.rate.length > 0) {
-      const rateFilters = activeFilters.rate.map(rate => `tag:"${rate.toUpperCase()}"`);
+      const rateFilters = activeFilters.rate.map(rate => `tag:"Speed_${rate}"`);
       filters.push(`(${rateFilters.join(' OR ')})`);
     }
-    
-    // Application (tags dans Shopify) - Avec guillemets et préservation de la casse
-    if (activeFilters.app.length > 0) {
-      const appFilters = activeFilters.app.map(app => `tag:"${app.toUpperCase()}"`);
-      filters.push(`(${appFilters.join(' OR ')})`);
+
+    // Distance (tags structurés)
+    if (activeFilters.dist.length > 0) {
+      const distFilters = activeFilters.dist.map(dist => `tag:"Distance_${dist}"`);
+      filters.push(`(${distFilters.join(' OR ')})`);
     }
-    
+
+    // Technologie (tags structurés)
+    if (activeFilters.tech.length > 0) {
+      const techFilters = activeFilters.tech.map(tech => `tag:"Tech_${tech}"`);
+      filters.push(`(${techFilters.join(' OR ')})`);
+    }
+
     // Search query
     if (searchQuery) {
       filters.push(`title:*${searchQuery}* OR sku:*${searchQuery}*`);
     }
-    
+
+    // Exclusions globales (Produits niches comme CFP)
+    // On ne les affiche QUE si l'utilisateur les demande explicitement via filtres ou catégorie
+    const isRequestingCFP = categoryId.includes('cfp') ||
+      activeFilters.ff.some(ff => ff.toLowerCase().includes('cfp'));
+
+    if (!isRequestingCFP) {
+      filters.push('NOT tag:"FormFactor_CFP"');
+      filters.push('NOT tag:"FormFactor_CFP2"');
+      filters.push('NOT tag:"FormFactor_CFP4"');
+    }
+
     const finalQuery = filters.length > 0 ? filters.join(' AND ') : undefined;
-    
+
+
     // Debug log pour vérifier la query Shopify
     console.log('🔍 Shopify Query:', finalQuery);
     console.log('📊 Active Filters:', activeFilters);
     console.log('🏷️ Category ID:', categoryId);
-    
+
     return finalQuery;
   }, [activeFilters, searchQuery, categoryId]);
 
   // Shopify integration - Charger TOUS les produits (sans restriction de collection)
-  const { 
-    products: shopifyProducts, 
-    loading: shopifyLoading, 
-    hasNextPage, 
-    isLoadingMore, 
-    loadMore 
-  } = useShopifyProducts({ 
+  const {
+    products: shopifyProducts,
+    loading: shopifyLoading,
+    hasNextPage,
+    isLoadingMore,
+    loadMore
+  } = useShopifyProducts({
     first: 50,
     query: shopifyQuery || '*' // "*" charge tous les produits si aucun filtre
   });
@@ -190,7 +222,7 @@ export default function ProductsListPage() {
     const newParams = new URLSearchParams(searchParams);
     toggleParamMulti(newParams, filterType, value);
     setSearchParams(newParams);
-    
+
     // Analytics
     trackFilterChange({
       [filterType]: getParamArray(newParams, filterType)
@@ -210,14 +242,21 @@ export default function ProductsListPage() {
       // Utiliser les données Shopify mappées
       return shopifyProducts.map(mapShopifyToUnified);
     }
-    // Fallback sur les données mock
+
+    // Si des filtres sont actifs (query différente de '*'), ne PAS afficher le mock
+    // Cela évite d'afficher des produits non pertinents quand la recherche ne donne rien
+    if (shopifyQuery && shopifyQuery !== '*') {
+      return [];
+    }
+
+    // Fallback sur les données mock uniquement si aucun filtre n'est actif
     return productsData.products.map(mapMockToUnified);
-  }, [shopifyProducts]);
+  }, [shopifyProducts, shopifyQuery]);
 
   // Tri côté client (on garde les filtres côté serveur)
   const sortedProducts = useMemo(() => {
     const products = [...allProducts];
-    
+
     products.sort((a, b) => {
       switch (sortBy) {
         case 'price-asc':
@@ -242,6 +281,13 @@ export default function ProductsListPage() {
 
   // Fonction pour ajouter un produit au panier
   const handleAddToCart = async (product: UnifiedProduct) => {
+    // Redirection si produit complexe (Câble, CWDM, DWDM ou multi-compatibilité)
+    // On considère > 1 compatibilité comme "besoin de choix"
+    if (product.isCable || product.isCWDM || product.isDWDM || product.compatibility?.length > 1) {
+      window.location.href = `/produit/${product.handle}`;
+      return;
+    }
+
     if (product.isShopify && product.defaultVariantId) {
       await addToShopifyCart(product.defaultVariantId, 1, {
         id: product.id,
@@ -249,9 +295,19 @@ export default function ProductsListPage() {
         price: product.price,
         handle: product.handle
       });
+
+      toast({
+        title: "Ajouté au panier",
+        description: `${product.title} a été ajouté à votre panier.`
+      });
+      openCart();
+    } else {
+      // Fallback redirection pour les autres cas
+      window.location.href = `/produit/${product.handle}`;
     }
-    trackAddToCart(product.id, product.title, product.price);
   };
+
+
 
   const FilterCheckboxGroup = ({ filterType, config }: {
     filterType: keyof typeof activeFilters;
@@ -261,7 +317,6 @@ export default function ProductsListPage() {
       <PopoverTrigger asChild>
         <Button variant="outline" className="justify-between h-10 bg-white">
           <span className="flex items-center">
-            <span className="mr-2 text-xs">{config.icon}</span>
             {config.title}
             {activeFilters[filterType].length > 0 && (
               <Badge variant="secondary" className="ml-2 h-5 min-w-5 text-xs">
@@ -291,22 +346,26 @@ export default function ProductsListPage() {
               </Button>
             )}
           </div>
-          {config.options.map((option) => (
-            <div key={option} className="flex items-center space-x-2">
-              <Checkbox
-                id={`${filterType}-${option}`}
-                checked={activeFilters[filterType].includes(option)}
-                onCheckedChange={() => toggleFilter(filterType, option)}
-                className="data-[state=checked]:bg-brand data-[state=checked]:border-brand"
-              />
-              <label
-                htmlFor={`${filterType}-${option}`}
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-              >
-                {option.toUpperCase()}
-              </label>
-            </div>
-          ))}
+          {config.options.map((option) => {
+            const isDisabled = isOptionDisabled(filterType, option, activeFilters);
+            return (
+              <div key={option} className={`flex items-center space-x-2 ${isDisabled ? 'opacity-50' : ''}`}>
+                <Checkbox
+                  id={`${filterType}-${option}`}
+                  checked={activeFilters[filterType].includes(option)}
+                  onCheckedChange={() => !isDisabled && toggleFilter(filterType, option)}
+                  disabled={isDisabled}
+                  className="data-[state=checked]:bg-brand data-[state=checked]:border-brand"
+                />
+                <label
+                  htmlFor={`${filterType}-${option}`}
+                  className={`text-sm font-medium leading-none ${isDisabled ? 'cursor-not-allowed text-muted-foreground' : 'cursor-pointer'}`}
+                >
+                  {option.toUpperCase()}
+                </label>
+              </div>
+            );
+          })}
         </div>
       </PopoverContent>
     </Popover>
@@ -316,17 +375,17 @@ export default function ProductsListPage() {
     <>
       <Helmet>
         <title>
-          {currentCategory 
-            ? `${currentCategory.current} - ${currentCategory.parent} | Vaonix` 
+          {currentCategory
+            ? `${currentCategory.current} - ${currentCategory.parent} | Vaonix`
             : 'Modules Optiques - Transceivers SFP, QSFP | Vaonix'
           }
         </title>
-        <meta 
-          name="description" 
-          content={currentCategory 
+        <meta
+          name="description"
+          content={currentCategory
             ? `Découvrez notre gamme ${currentCategory.current} pour ${currentCategory.parent}. Modules optiques et câbles haute performance.`
             : 'Découvrez notre gamme complète de modules optiques compatibles Cisco, Juniper, Huawei. Transceivers SFP, SFP+, QSFP pour tous débits.'
-          } 
+          }
         />
         <meta name="keywords" content="modules optiques, transceiver, SFP, QSFP, Cisco, Juniper, Huawei, fibre optique" />
         <link rel="canonical" href={`${window.location.origin}/produits/liste`} />
@@ -334,7 +393,7 @@ export default function ProductsListPage() {
 
       <div className="min-h-screen bg-background">
         <Header />
-        
+
         <main className="pt-20">
           {/* Breadcrumb */}
           {currentCategory && (
@@ -363,8 +422,8 @@ export default function ProductsListPage() {
                   {currentCategory ? currentCategory.current : 'Modules Optiques'}
                 </h1>
                 <p className="text-xl text-muted-foreground">
-                  {currentCategory 
-                    ? `${currentCategory.parent} - Solutions haute performance` 
+                  {currentCategory
+                    ? `${currentCategory.parent} - Solutions haute performance`
                     : 'Transceivers compatibles pour tous vos équipements réseau'
                   }
                 </p>
@@ -386,12 +445,12 @@ export default function ProductsListPage() {
                     className="pl-10 bg-white"
                   />
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground whitespace-nowrap">
                     {sortedProducts.length} produit{sortedProducts.length !== 1 ? 's' : ''} {hasNextPage ? '+' : ''} trouvé{sortedProducts.length !== 1 ? 's' : ''}
                   </span>
-                  
+
                   {getActiveFiltersCount() > 0 && (
                     <Button
                       variant="ghost"
@@ -408,6 +467,25 @@ export default function ProductsListPage() {
 
               {/* Desktop Filters */}
               <div className="hidden lg:flex items-center gap-3 flex-wrap">
+                {/* Popular Categories (Desktop) */}
+                <div className="w-full mb-4 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                  <span className="text-sm font-medium text-muted-foreground whitespace-nowrap mr-2">Gammes populaires :</span>
+                  {POPULAR_RATES.map((rate) => {
+                    const isActive = activeFilters.rate.includes(rate);
+                    return (
+                      <Button
+                        key={rate}
+                        variant={isActive ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => toggleFilter('rate', rate)}
+                        className={`rounded-full h-8 px-4 text-xs ${isActive ? 'bg-primary text-primary-foreground' : 'bg-white hover:bg-gray-50'}`}
+                      >
+                        {rate}
+                      </Button>
+                    );
+                  })}
+                </div>
+
                 {Object.entries(FILTER_CONFIG).map(([key, config]) => (
                   <FilterCheckboxGroup
                     key={key}
@@ -529,10 +607,9 @@ export default function ProductsListPage() {
                   {Object.entries(activeFilters).map(([filterType, values]) =>
                     values.map(value => (
                       <Badge key={`${filterType}-${value}`} variant="secondary" className="flex items-center gap-1">
-                        <span className="text-xs">{FILTER_CONFIG[filterType as keyof typeof FILTER_CONFIG].icon}</span>
                         {value.toUpperCase()}
-                        <X 
-                          className="h-3 w-3 cursor-pointer hover:text-destructive" 
+                        <X
+                          className="h-3 w-3 cursor-pointer hover:text-destructive"
                           onClick={() => toggleFilter(filterType as keyof typeof activeFilters, value)}
                         />
                       </Badge>
@@ -546,7 +623,21 @@ export default function ProductsListPage() {
           {/* Products Display */}
           <div className="container mx-auto px-4 py-8">
             <AnimatePresence mode="wait">
-              {viewMode === 'table' ? (
+              {shopifyLoading && !isLoadingMore && sortedProducts.length === 0 ? (
+                viewMode === 'table' ? (
+                  <div className="space-y-2">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <ProductSkeleton key={i} viewMode="table" />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {Array.from({ length: 8 }).map((_, i) => (
+                      <ProductSkeleton key={i} viewMode="cards" />
+                    ))}
+                  </div>
+                )
+              ) : viewMode === 'table' ? (
                 <motion.div
                   key="table"
                   initial={{ opacity: 0 }}
@@ -554,77 +645,124 @@ export default function ProductsListPage() {
                   exit={{ opacity: 0 }}
                   className="bg-white rounded-lg shadow-sm border overflow-hidden"
                 >
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Image</TableHead>
-                        <TableHead>Référence PN</TableHead>
-                        <TableHead>Plateforme</TableHead>
-                        <TableHead>Description</TableHead>
-                        <TableHead>Form Factor</TableHead>
-                        <TableHead>Portée</TableHead>
-                        <TableHead>Débit</TableHead>
-                        <TableHead>Fibre</TableHead>
-                        <TableHead>Application</TableHead>
-                        <TableHead>Prix</TableHead>
-                        <TableHead>Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {sortedProducts.map((product) => (
-                        <TableRow key={product.pn}>
-                          <TableCell>
-                          <img 
-                            src={product.images[0]} 
-                            alt={product.title}
-                            className="w-12 h-12 object-cover rounded-md"
-                            loading="lazy"
+                  <div className="space-y-2">
+                    {/* Header Row (Optional, for alignment) */}
+                    <div className="hidden md:flex px-4 py-2 text-xs font-medium text-muted-foreground bg-muted/30 rounded-lg border border-transparent">
+                      <div className="w-16 flex-shrink-0">Image</div>
+                      <div className="flex-1 grid grid-cols-12 gap-4">
+                        <div className="col-span-5">Produit</div>
+                        <div className="col-span-4">Spécifications</div>
+                        <div className="col-span-3 text-right">Prix & Stock</div>
+                      </div>
+                    </div>
+
+                    {sortedProducts.map((product) => (
+                      <div
+                        key={product.pn}
+                        className="group flex flex-col md:flex-row items-center gap-4 p-3 bg-white rounded-lg border hover:border-primary/50 transition-all hover:shadow-sm"
+                      >
+                        {/* Image */}
+                        <div className="w-16 h-16 flex-shrink-0 bg-gray-50 rounded-md p-1">
+                          <DynamicProductImage
+                            product={{
+                              title: product.title,
+                              handle: product.handle,
+                              specs: {
+                                formFactor: product.form_factor,
+                                speed: product.speed,
+                                distance: product.range,
+                                media: product.fiber,
+                                wavelength: product.wavelength
+                              }
+                            }}
+                            className="w-full h-full object-contain"
+                            showLabel={false}
                           />
-                          </TableCell>
-                          <TableCell className="font-mono text-sm">{product.pn}</TableCell>
-                          <TableCell>{product.compatibility.join(', ')}</TableCell>
-                          <TableCell>
-                            <Link 
-                              to={`/produit/${product.handle}`}
-                              className="text-primary hover:underline font-medium"
-                            >
-                              {product.title}
-                            </Link>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline">{product.form_factor}</Badge>
-                          </TableCell>
-                          <TableCell>{product.range}</TableCell>
-                          <TableCell>
-                            <Badge className="bg-primary/10 text-primary">{product.speed}</Badge>
-                          </TableCell>
-                          <TableCell>{product.fiber}</TableCell>
-                          <TableCell>{product.application}</TableCell>
-                          <TableCell className="font-semibold text-primary">{product.price} €</TableCell>
-                          <TableCell>
+                        </div>
+
+                        {/* Content Container */}
+                        <div className="flex-1 min-w-0 w-full grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+
+                          {/* Main Info */}
+                          <div className="md:col-span-5 space-y-1">
+                            <div className="flex items-center gap-2">
+                              <Link
+                                to={`/produit/${product.handle}`}
+                                className="font-semibold text-foreground hover:text-primary transition-colors line-clamp-1"
+                                title={product.title}
+                              >
+                                {product.title}
+                              </Link>
+                              {product.compatibility && product.compatibility.length > 0 && (
+                                <Badge variant="outline" className="text-[10px] h-4 px-1 hidden lg:inline-flex">
+                                  {product.compatibility[0]}
+                                </Badge>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                              <span className="font-mono bg-muted px-1 rounded">{product.pn}</span>
+                              <span className="hidden sm:inline">•</span>
+                              <span className="line-clamp-1">{product.description}</span>
+                            </div>
+                          </div>
+
+                          {/* Specs */}
+                          <div className="md:col-span-4 grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                            <div className="flex items-center justify-between md:justify-start gap-2">
+                              <span className="text-muted-foreground">Débit:</span>
+                              <span className="font-medium">{product.speed}</span>
+                            </div>
+                            <div className="flex items-center justify-between md:justify-start gap-2">
+                              <span className="text-muted-foreground">Portée:</span>
+                              <span className="font-medium">{product.range}</span>
+                            </div>
+                            <div className="flex items-center justify-between md:justify-start gap-2">
+                              <span className="text-muted-foreground">Format:</span>
+                              <span className="font-medium">{product.form_factor}</span>
+                            </div>
+                            <div className="flex items-center justify-between md:justify-start gap-2">
+                              <span className="text-muted-foreground">Media:</span>
+                              <span className="font-medium">{product.fiber}</span>
+                            </div>
+                          </div>
+
+                          {/* Price & Actions */}
+                          <div className="md:col-span-3 flex items-center justify-between md:justify-end gap-4 mt-2 md:mt-0 pt-2 md:pt-0 border-t md:border-t-0">
+                            <div className="text-right">
+                              <div className="font-bold text-lg text-primary whitespace-nowrap">
+                                {product.price} €
+                              </div>
+                              <div className="text-[10px] text-green-600 font-medium flex items-center justify-end gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-green-600"></span>
+                                En stock
+                              </div>
+                            </div>
+
                             <div className="flex gap-2">
                               <Button
-                                size="sm"
-                                variant="outline"
+                                size="icon"
+                                variant="ghost"
                                 asChild
+                                className="h-9 w-9 text-muted-foreground hover:text-primary"
                               >
                                 <Link to={`/produit/${product.handle}`}>
                                   <Eye className="h-4 w-4" />
                                 </Link>
                               </Button>
                               <Button
-                                size="sm"
+                                size="icon"
                                 onClick={() => handleAddToCart(product)}
-                                className="bg-primary hover:bg-primary/90"
+                                className="h-9 w-9 bg-primary hover:bg-primary/90 shadow-sm"
                               >
                                 <ShoppingCart className="h-4 w-4" />
                               </Button>
                             </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                          </div>
+
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </motion.div>
               ) : (
                 <motion.div
@@ -643,50 +781,87 @@ export default function ProductsListPage() {
                     >
                       <Card className="h-full hover:shadow-lg transition-shadow">
                         <CardContent className="p-6">
-                          <img 
-                            src={product.images[0]} 
-                            alt={product.title}
-                            className="w-full h-32 object-cover rounded-md mb-4"
-                            loading="lazy"
+                          <DynamicProductImage
+                            product={{
+                              title: product.title,
+                              handle: product.handle,
+                              specs: {
+                                formFactor: product.form_factor,
+                                speed: product.speed,
+                                distance: product.range,
+                                media: product.fiber,
+                                wavelength: product.wavelength
+                              }
+                            }}
+                            className="w-full h-32 rounded-md mb-4"
+                            showLabel={false}
                           />
                           <div className="space-y-2">
                             <p className="text-xs font-mono text-muted-foreground">{product.pn}</p>
                             <h3 className="font-semibold line-clamp-2">
-                              <Link 
+                              <Link
                                 to={`/produit/${product.handle}`}
                                 className="text-primary hover:underline"
                               >
                                 {product.title}
                               </Link>
                             </h3>
-                            <div className="flex flex-wrap gap-1">
-                              <Badge variant="outline" className="text-xs">{product.form_factor}</Badge>
-                              <Badge className="bg-primary/10 text-primary text-xs">{product.speed}</Badge>
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                              {product.application && (
+                                <div className="bg-muted/50 p-2 rounded">
+                                  <span className="font-semibold block">Technologie</span>
+                                  {product.application}
+                                </div>
+                              )}
+                              {product.speed && (
+                                <div className="bg-muted/50 p-2 rounded">
+                                  <span className="font-semibold block">Débit</span>
+                                  {product.speed}
+                                </div>
+                              )}
+                              {product.range && (
+                                <div className="bg-muted/50 p-2 rounded">
+                                  <span className="font-semibold block">Distance</span>
+                                  {product.range}
+                                </div>
+                              )}
+                              {product.form_factor && (
+                                <div className="bg-muted/50 p-2 rounded">
+                                  <span className="font-semibold block">Format</span>
+                                  {product.form_factor}
+                                </div>
+                              )}
+                              {product.wavelength && (
+                                <div className="bg-muted/50 p-2 rounded">
+                                  <span className="font-semibold block">Longueur d'onde</span>
+                                  {product.wavelength}
+                                </div>
+                              )}
                             </div>
                             <p className="text-sm text-muted-foreground line-clamp-2">{product.description}</p>
                             <div className="flex items-center justify-between pt-2">
                               <span className="font-bold text-primary">{product.price} €</span>
                               <div className="flex gap-2">
-              <div className="flex items-center justify-between">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  asChild
-                  className="flex-1 mr-2"
-                >
-                  <Link to={`/produit/${product.handle}`}>
-                    Voir détails
-                  </Link>
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={() => handleAddToCart(product)}
-                  className="flex-shrink-0"
-                >
-                  <ShoppingBag className="w-4 h-4 mr-1" />
-                  Ajouter
-                </Button>
-              </div>
+                                <div className="flex items-center justify-between">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    asChild
+                                    className="flex-1 mr-2"
+                                  >
+                                    <Link to={`/produit/${product.handle}`}>
+                                      Voir détails
+                                    </Link>
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleAddToCart(product)}
+                                    className="flex-shrink-0"
+                                  >
+                                    <ShoppingBag className="w-4 h-4 mr-1" />
+                                    Ajouter
+                                  </Button>
+                                </div>
                               </div>
                             </div>
                           </div>

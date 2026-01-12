@@ -1,15 +1,7 @@
-# Autoriser tous les bots de moteurs de recherche
 User-agent: *
 Allow: /
+Disallow: /panier
+Disallow: /compte
+Disallow: /checkout
 
-# Empêcher l'indexation des assets et fichiers techniques
-Disallow: /src/
-Disallow: /node_modules/
-Disallow: /*.json$
-Disallow: /*.map$
-
-# Sitemap
 Sitemap: https://vaonix-shop.fr/sitemap.xml
-
-# Crawl-delay pour éviter la surcharge (optionnel)
-# Crawl-delay: 1

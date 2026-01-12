@@ -16,10 +16,15 @@ import {
   ArrowLeft,
   Package,
   Truck,
+  CreditCard,
+  Lock,
+  ShieldCheck,
 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { formatPrice } from '@/lib/utils';
 import { Link, useNavigate } from 'react-router-dom';
+import productsData from '@/config/products.example.json';
+import { mapMockToUnified } from '@/lib/productMapper';
 
 export default function CartPage() {
   const navigate = useNavigate();
@@ -35,6 +40,8 @@ export default function CartPage() {
   } = useCart();
 
   const [promoCode, setPromoCode] = useState('');
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'error' | 'success' | 'info'>('info');
 
   // Seuil et frais de port (exemple : livraison gratuite à partir de 500 €)
   const shippingThreshold = 500;
@@ -125,9 +132,43 @@ export default function CartPage() {
                 <p className="mb-4 text-sm">
                   Parcourez nos modules optiques pour commencer votre sélection.
                 </p>
-                <Button asChild>
+                <Button asChild className="mb-12">
                   <Link to="/">Découvrir les produits</Link>
                 </Button>
+
+                {/* Popular Products Cross-sell */}
+                <div className="w-full max-w-5xl text-left">
+                  <h3 className="text-xl font-bold mb-6 text-foreground">Nos Meilleures Ventes</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {productsData.products.slice(0, 4).map(mapMockToUnified).map((product) => (
+                      <Card key={product.id} className="group hover:shadow-lg transition-shadow">
+                        <CardContent className="p-4">
+                          <div className="aspect-square rounded-lg overflow-hidden bg-secondary/10 mb-4 relative">
+                            <img
+                              src={product.images[0]}
+                              alt={product.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <p className="text-xs font-mono text-muted-foreground">{product.pn}</p>
+                            <h3 className="font-medium text-sm line-clamp-2 min-h-[2.5rem]">
+                              <Link to={`/produit/${product.handle}`} className="hover:text-primary transition-colors">
+                                {product.title}
+                              </Link>
+                            </h3>
+                            <div className="flex items-center justify-between pt-2">
+                              <span className="font-bold text-primary">{formatPrice(product.price)}€</span>
+                              <Button size="sm" variant="outline" asChild>
+                                <Link to={`/produit/${product.handle}`}>Voir</Link>
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
               </div>
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -226,8 +267,14 @@ export default function CartPage() {
                         className="w-full flex items-center justify-center"
                         disabled={!checkoutUrl || loading}
                         onClick={() => {
-                          if (!checkoutUrl) return;
+                          if (!checkoutUrl) {
+                            setToastMessage('Impossible d\'obtenir l\'URL de paiement.');
+                            setToastType('error');
+                            return;
+                          }
                           window.open(checkoutUrl, '_blank');
+                          setToastMessage('Redirection vers le paiement...');
+                          setToastType('success');
                         }}
                       >
                         Valider le panier sur Shopify
@@ -244,26 +291,32 @@ export default function CartPage() {
                     </CardContent>
                   </Card>
 
-                  {/* Bloc code promo (visuel uniquement pour l’instant) */}
-                  <Card>
-                    <CardContent className="p-4 space-y-3">
-                      <h3 className="text-sm font-semibold">
-                        Code promotionnel
-                      </h3>
-                      <div className="flex gap-2">
-                        <Input
-                          placeholder="Saisir votre code"
-                          value={promoCode}
-                          onChange={(e) => setPromoCode(e.target.value)}
-                          disabled={loading}
-                        />
-                        <Button variant="outline" disabled>
-                          Appliquer
-                        </Button>
+
+
+                  {/* Reassurance & Paiement */}
+                  <Card className="bg-muted/30 border-none shadow-none">
+                    <CardContent className="p-4 space-y-4">
+                      <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                        <ShieldCheck className="w-4 h-4 text-green-600" />
+                        Paiement 100% Sécurisé
                       </div>
-                      <p className="text-xs text-muted-foreground">
-                        Les codes promotionnels sont appliqués lors de l&apos;étape
-                        de paiement.
+                      <div className="flex gap-2 flex-wrap">
+                        <div className="bg-white border rounded px-2 py-1 h-8 flex items-center justify-center">
+                          <span className="font-bold text-xs text-blue-800">VISA</span>
+                        </div>
+                        <div className="bg-white border rounded px-2 py-1 h-8 flex items-center justify-center">
+                          <span className="font-bold text-xs text-red-600">Mastercard</span>
+                        </div>
+                        <div className="bg-white border rounded px-2 py-1 h-8 flex items-center justify-center">
+                          <span className="font-bold text-xs text-blue-500">AMEX</span>
+                        </div>
+                        <div className="bg-white border rounded px-2 py-1 h-8 flex items-center justify-center">
+                          <span className="font-bold text-xs text-indigo-600">PayPal</span>
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Lock className="w-3 h-3" />
+                        Vos données sont chiffrées (SSL 256-bit)
                       </p>
                     </CardContent>
                   </Card>

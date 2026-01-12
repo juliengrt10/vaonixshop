@@ -113,6 +113,16 @@ export const CART_FRAGMENT = `
         node {
           id
           quantity
+          cost {
+            totalAmount {
+              amount
+              currencyCode
+            }
+            amountPerQuantity {
+              amount
+              currencyCode
+            }
+          }
           merchandise {
             ... on ProductVariant {
               id

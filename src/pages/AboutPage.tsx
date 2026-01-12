@@ -15,7 +15,7 @@ export default function AboutPage() {
     {
       icon: Shield,
       title: "Fiabilité & Qualité",
-      description: "Tous nos produits sont soumis à des contrôles qualité stricts et bénéficient d'une garantie 3 ans."
+      description: "Tous nos produits sont soumis à des contrôles qualité stricts et bénéficient d'une garantie 2 ans."
     },
     {
       icon: Zap,
@@ -39,7 +39,7 @@ export default function AboutPage() {
   return (
     <>
       <Header />
-      
+
       <main className="pt-16">
         {/* Hero Section */}
         <section className="bg-gradient-to-br from-brand-50 to-white py-16">
@@ -54,8 +54,8 @@ export default function AboutPage() {
                 À propos de Vaonix
               </h1>
               <p className="text-xl text-muted-foreground leading-relaxed">
-                Spécialiste européen des modules optiques compatibles multi-constructeurs, 
-                Vaonix accompagne les entreprises dans leurs projets d'infrastructure réseau 
+                Spécialiste européen des modules optiques compatibles multi-constructeurs,
+                Vaonix accompagne les entreprises dans leurs projets d'infrastructure réseau
                 avec expertise et fiabilité.
               </p>
             </motion.div>
@@ -100,23 +100,23 @@ export default function AboutPage() {
                 </h2>
                 <div className="prose prose-lg text-muted-foreground space-y-4">
                   <p>
-                    Fondée par des ingénieurs passionnés de télécommunications, Vaonix est née 
-                    du constat que les modules optiques d'origine constructeur représentent un 
+                    Fondée par des ingénieurs passionnés de télécommunications, Vaonix est née
+                    du constat que les modules optiques d'origine constructeur représentent un
                     coût disproportionné par rapport à leur valeur technique réelle.
                   </p>
                   <p>
-                    Nous avons développé une expertise unique dans la sélection, le test et la 
-                    validation de modules optiques compatibles, offrant les mêmes performances 
+                    Nous avons développé une expertise unique dans la sélection, le test et la
+                    validation de modules optiques compatibles, offrant les mêmes performances
                     que les références d'origine à des prix plus justes.
                   </p>
                   <p>
-                    Aujourd'hui, nous servons des centaines d'entreprises en Europe, des PME 
-                    aux grandes organisations, en leur fournissant des solutions fiables pour 
+                    Aujourd'hui, nous servons des centaines d'entreprises en Europe, des PME
+                    aux grandes organisations, en leur fournissant des solutions fiables pour
                     leurs infrastructures critiques.
                   </p>
                 </div>
               </motion.div>
-              
+
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}

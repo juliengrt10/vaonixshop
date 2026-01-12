@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 export const Hero = () => {
   const handleCTAClick = (action: 'voir_produits' | 'demander_devis') => {
     track('cta_click', { location: 'hero', action });
-    
+
     if (action === 'voir_produits') {
       document.getElementById('produits')?.scrollIntoView({ behavior: 'smooth' });
     } else {
@@ -19,11 +19,11 @@ export const Hero = () => {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white to-brand-50">
       {/* Animated Background */}
       <div className="absolute inset-0 animate-gradient opacity-50" />
-      
+
       {/* Content */}
       <div className="container mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center relative z-10">
         {/* Text Content */}
-        <motion.div 
+        <motion.div
           className="space-y-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -48,7 +48,7 @@ export const Hero = () => {
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
-            <Button 
+            <Button
               onClick={() => handleCTAClick('voir_produits')}
               size="lg"
               className="bg-brand hover:bg-brand-600 text-white btn-brand group"
@@ -56,8 +56,8 @@ export const Hero = () => {
               Découvrir nos produits
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
-            
-            <Button 
+
+            <Button
               onClick={() => handleCTAClick('demander_devis')}
               size="lg"
               variant="outline"
@@ -80,13 +80,13 @@ export const Hero = () => {
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 bg-green-500 rounded-full" />
-              <span>Garantie 3 ans</span>
+              <span>Garantie 2 ans</span>
             </div>
           </div>
         </motion.div>
 
         {/* Hero Image */}
-        <motion.div 
+        <motion.div
           className="relative"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -101,15 +101,15 @@ export const Hero = () => {
               decoding="async"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
-            
+
             {/* Overlay gradient */}
             <div className="absolute inset-0 bg-gradient-to-t from-brand/20 to-transparent" />
-            
+
             {/* Floating elements */}
             <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 text-sm font-medium text-foreground shadow-lg">
               ✓ Compatible multi-constructeurs
             </div>
-            
+
             <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 text-sm font-medium text-foreground shadow-lg">
               ✓ Testé & certifié
             </div>
@@ -122,7 +122,7 @@ export const Hero = () => {
       </div>
 
       {/* Scroll indicator */}
-      <motion.div 
+      <motion.div
         className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
