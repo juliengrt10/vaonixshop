@@ -5,8 +5,8 @@ import math
 
 # Configuration
 INPUT_FILE = 'Liste de prix Vaonix 27022025.xlsm'
-OUTPUT_FILE = 'vaonix_shopify_import_final.csv'
-PRICE_MULTIPLIER = 1.07
+OUTPUT_FILE = 'vaonix_shopify_import_v2.csv'
+PRICE_MULTIPLIER = 1.15
 VENDOR_NAME = 'Vaonix'
 
 # Missing "Classic" Products to inject
@@ -53,29 +53,69 @@ def clean_price(value):
         return 0.0
 
 def parse_dac_length(bom):
-    # Try to extract length and potential suffix from BOM
-    # Pattern: Base - LengthM - Suffix
-    # e.g. DAC-10G-SFP-1M -> Length: 1, Suffix: ''
-    # e.g. DAC-10G-SFP-1M-HP -> Length: 1, Suffix: -HP
-    # e.g. DAC-10G-SFP-0-5M -> Length: 0-5, Suffix: ''
-    
     match = re.search(r'^(.*?)-(\d+(?:-\d+)?)M(.*)$', bom, re.IGNORECASE)
     if match:
         base = match.group(1)
         len_str = match.group(2)
         suffix = match.group(3)
-        
-        # Normalize length value
         length_val = len_str.replace('-', '.')
-        
-        # Clean suffix (remove leading hyphens, spaces)
         clean_suffix = suffix.strip('- ')
         
         variant_name = f"{length_val}m"
         if clean_suffix:
             variant_name += f" ({clean_suffix})"
             
-        return base, variant_name, length_val
+        return base, variant_name, float(length_val)
+    return None, None, None
+
+def check_temp_variant(bom):
+    # Detect -I (Industrial) or -E (Extended)
+    match = re.search(r'^(.*?)(-(?:I|E))$', bom, re.IGNORECASE)
+    if match:
+        base = match.group(1)
+        suffix = match.group(2).upper().strip('-')
+        variant_name = "Industrial (-40/+85°C)" if suffix == 'I' else "Extended (-10/+80°C)"
+        weight = 3 if suffix == 'I' else 2
+        return base, variant_name, weight
+    return None, None, None
+
+def check_dwdm_variant(bom):
+    # Detect DWDM Channel Cxx (e.g. -C17, -C61) anywhere in suffix
+    # Assumes format contains -C17...
+    match = re.search(r'^(.*?)(-C(\d{2}))(.*)$', bom, re.IGNORECASE)
+    if match:
+        base_part1 = match.group(1)
+        channel_code = match.group(2) # -C17
+        channel_num = match.group(3) # 17
+        suffix_rest = match.group(4)
+        
+        base_bom = base_part1 + suffix_rest # Reconstruct base without channel? Or strictly group by Base-DWDM
+        # Usually DWDM base is SFP-10G-ZR-DWDM
+        # And variants are SFP-10G-ZR-DWDM-C17
+        
+        # Simpler regex: ends with -C\d{2}
+        if re.search(r'-C\d{2}$', bom, re.IGNORECASE):
+             base = re.sub(r'-C\d{2}$', '', bom, flags=re.IGNORECASE)
+             channel = int(channel_num)
+             # Map channel to Wavelength provided in helper if needed, or just use CX
+             variant_name = f"Channel {channel} (C{channel})"
+             return base, variant_name, channel
+             
+    return None, None, None
+
+def check_cwdm_variant(bom):
+    match = re.search(r'^(.*?)-(\d{4})(?:NM)?(-[IE])?$', bom, re.IGNORECASE)
+    if match:
+        base = match.group(1)
+        wave = match.group(2)
+        suffix = match.group(3)
+        if 1270 <= int(wave) <= 1610:
+            variant_name = f"{wave}nm"
+            if suffix:
+                 suffix_clean = suffix.replace('-', '').upper()
+                 if suffix_clean == 'I': variant_name += " (Ind.)"
+                 if suffix_clean == 'E': variant_name += " (Ext.)"
+            return base, variant_name, int(wave)
     return None, None, None
 
 def categorize_product(bom, description):
@@ -96,7 +136,6 @@ def categorize_product(bom, description):
     else:
         tags.append("Transceiver")
 
-    # Form Factors
     if 'QSFP-DD' in bom_u: tags.append('QSFP-DD')
     elif 'QSFP28' in bom_u: tags.append('QSFP28')
     elif 'QSFP+' in bom_u or 'QSFP' in bom_u: tags.append('QSFP+')
@@ -105,13 +144,11 @@ def categorize_product(bom, description):
     elif 'SFP' in bom_u: tags.append('SFP')
     elif 'XFP' in bom_u: tags.append('XFP')
     
-    # Technology / Wavelength
     if 'DWDM' in bom_u or 'DWDM' in desc_u: tags.append('DWDM')
     if 'CWDM' in bom_u or 'CWDM' in desc_u: tags.append('CWDM')
     if 'BIDI' in bom_u or 'BIDI' in desc_u: tags.append('BiDi')
     if 'TUNABLE' in desc_u: tags.append('Tunable')
     
-    # Speed (Heuristic)
     if '400G' in bom_u: tags.append('400G')
     elif '100G' in bom_u: tags.append('100G')
     elif '40G' in bom_u: tags.append('40G')
@@ -128,15 +165,14 @@ def main():
     
     shopify_rows = []
     
-    # We'll use a dictionary to group DAC variants
-    # Key: Base BOM, Value: List of variants
-    dac_groups = {}
+    # Grouping dictionary
+    # Key: Base Handle, Value: List of variants
+    product_groups = {}
     
-    # Regular products list
-    products = []
+    # Standalone products
+    standalone_products = []
 
     print("Processing rows...")
-    # Skip header (usually row 1, but we'll check)
     start_row = 2 
     
     for row_idx in range(start_row, ws.max_row + 1):
@@ -145,19 +181,16 @@ def main():
         if not bom or not description:
             continue
 
-        # Exclusion Logic for duplicates
-        # User requested to remove HP (High Performance) and HW (Hardware specific) duplicates
-        # Check patterns: ends with -HP, contains "HW" in description or BOM
         if '-HP' in str(bom).upper() or ' HW' in str(bom).upper() or ' HW' in str(description).upper():
              continue
              
         price_raw = ws.cell(row=row_idx, column=9).value
-            
         price_cost = clean_price(price_raw)
         final_price = round(price_cost * PRICE_MULTIPLIER, 2)
         
         product_type, tags = categorize_product(bom, description)
         
+        # Base Item Data
         item = {
             'Handle': str(bom).lower().replace(' ', '-').replace('--', '-'),
             'Title': str(bom), 
@@ -168,7 +201,7 @@ def main():
             'Published': 'TRUE',
             'Option1 Name': 'Title', 
             'Option1 Value': 'Default Title',
-            'Variant Grams': 100,
+            'Variant Grams': 100, # Default weight
             'Variant Inventory Policy': 'deny', 
             'Variant Inventory Qty': 100, 
             'Variant Price': final_price,
@@ -176,115 +209,136 @@ def main():
             'Image Src': '' 
         }
         
-        # Check if DAC/AOC to group
+        # LOGIC 1: CABLES (DAC/AOC)
         is_cable = 'DAC' in str(bom).upper() or ('AOC' in str(bom).upper() and 'CABLE' in str(description).upper())
         
-        parsed_base = None
+        # LOGIC 2: TEMPERATURE VARIANTS
+        base_temp, var_name_temp, weight_temp = check_temp_variant(bom)
+        
+        # LOGIC 3: DWDM CHANNELS
+        base_dwdm, var_name_dwdm, weight_dwdm = check_dwdm_variant(bom)
+        
+        # LOGIC 4: CWDM WAVELENGTHS
+        base_cwdm, var_name_cwdm, weight_cwdm = check_cwdm_variant(bom)
+        
         if is_cable:
             base_bom, variant_name, length_val = parse_dac_length(bom)
             if base_bom:
-                parsed_base = base_bom
-                if base_bom not in dac_groups:
-                    dac_groups[base_bom] = []
+                group_key = base_bom.lower().replace(' ', '-')
+                if group_key not in product_groups:
+                    product_groups[group_key] = {'type': 'length', 'base_title': base_bom, 'variants': []}
                 
-                # Update item for variant
                 item['Option1 Name'] = 'Length'
                 item['Option1 Value'] = variant_name
-                # Store numeric length for sorting
-                item['_sort_len'] = float(length_val)
-                
-                dac_groups[base_bom].append(item)
+                item['_sort'] = length_val
+                product_groups[group_key]['variants'].append(item)
             else:
-                products.append(item)
-        else:
-            # Check for Temperature Suffixes for Transceivers
-            # Suffixes: -I (Industrial -40/85), -E (Extended -15/85 or similar)
-            # We want to group SFP-1G-SX and SFP-1G-SX-I under SFP-1G-SX
-            
-            # Regex to find -I or -E at end of BOM
-            # Use 'dac_groups' (or a new dict) to group them? 
-            # Let's use a general 'grouped_products' dict or reuse dac_groups if we rename it.
-            # But Transceivers variants are "Temperature", DACs are "Length".
-            # We can use the same structure but different Option1 Name.
-            
-            match_temp = re.search(r'^(.*?)(-(?:I|E))$', bom, re.IGNORECASE)
-            
-            if match_temp:
-                base_bom = match_temp.group(1)
-                suffix = match_temp.group(2).upper().strip('-') # I or E
+                standalone_products.append(item)
                 
-                variant_val = "Industrial" if suffix == 'I' else "Extended"
-                if suffix == 'I': variant_val = "Industrial (-40/+85°C)"
-                if suffix == 'E': variant_val = "Extended (-10/+80°C)" # Approximate based on file
-                
-                # We need to check if the Base BOM exists as a standalone product row
-                # or if we need to create the group now.
-                # Since we iterate sequentially, we might encounter the Base first or the Variant first.
-                # We need a robust grouping mechanism.
-                # Let's put ALL transceivers into a "potential group" dict `transceiver_groups`
-                # Key: Base BOM (e.g. SFP-1G-SX), Value: List of items
-                
-                # If BOM has no suffix, it is the Base.
-                # If BOM has suffix, stripping it gives the Base.
-                
-                pass # Handled below
+        elif base_cwdm:
+            group_key = base_cwdm.lower().replace(' ', '-')
+            if group_key not in product_groups:
+                product_groups[group_key] = {'type': 'wavelength', 'base_title': base_cwdm, 'variants': []}
             
-            # Simplified Logic:
-            # Detect Base BOM
-            base_bom = bom
-            ver_name = "Commercial (0/70°C)" # Default
-            
-            # Check suffixes
-            if bom.upper().endswith('-I'):
-                base_bom = bom[:-2]
-                ver_name = "Industrial (-40/+85°C)"
-            elif bom.upper().endswith('-E'):
-                base_bom = bom[:-2]
-                ver_name = "Extended (-10/+80°C)"
-            
-            # Special case cleanup: if base ends with hyphen (unlikely if logic above is correct but check)
-            # SFP-1G-SX-I -> SFP-1G-SX. Correct.
-            
-            # Store in grouping dict
-            if base_bom not in dac_groups:
-                dac_groups[base_bom] = []
+            item['Option1 Name'] = 'Wavelength'
+            item['Option1 Value'] = var_name_cwdm
+            item['_sort'] = weight_cwdm
+            product_groups[group_key]['variants'].append(item)
+
+        elif base_dwdm:
+            group_key = base_dwdm.lower().replace(' ', '-')
+            if group_key not in product_groups:
+                product_groups[group_key] = {'type': 'channel', 'base_title': base_dwdm, 'variants': []}
                 
+            item['Option1 Name'] = 'Channel (ITU)'
+            item['Option1 Value'] = var_name_dwdm
+            item['_sort'] = weight_dwdm
+            product_groups[group_key]['variants'].append(item)
+            
+        elif base_temp:
+            group_key = base_temp.lower().replace(' ', '-')
+            # If we already have a commercial version (check below), we merge.
+            # If checking order matters: usually Commercial comes first as base.
+            if group_key not in product_groups:
+                 product_groups[group_key] = {'type': 'temp', 'base_title': base_temp, 'variants': []}
+            
             item['Option1 Name'] = 'Temperature'
-            item['Option1 Value'] = ver_name
-            # Sorting weight: Commercial=1, Extended=2, Industrial=3
-            weight = 1
-            if 'Industrial' in ver_name: weight = 3
-            if 'Extended' in ver_name: weight = 2
-            item['_sort_len'] = weight 
+            item['Option1 Value'] = var_name_temp
+            item['_sort'] = weight_temp
+            product_groups[group_key]['variants'].append(item)
             
-            dac_groups[base_bom].append(item)
+        else:
+            # Could be a Base for Temp or Channel, or purely standalone
+            # We treat it as standalone first, but index it by Handle so we can merge later?
+            # Simpler: All non-variants are added to 'standalone_products'
+            # EXCEPT if they are the "Commercial" base of a Temperature group.
+            
+            # Check if this BOM is referenced as a base by others? 
+            # It's hard in one pass. 
+            # Strategy: Add to standalone. Post-process to merge standalone with groups if keys match.
+            item['_is_base'] = True
+            item['Option1 Name'] = 'Temperature' 
+            item['Option1 Value'] = 'Commercial (0/70°C)'
+            item['_sort'] = 1
+            standalone_products.append(item)
 
+    # MERGE STANDALONE INTO GROUPS
+    final_standalone = []
+    
+    for item in standalone_products:
+        handle = item['Handle']
+        
+        # Check if this handle exists as a group key
+        if handle in product_groups:
+            # It's the base product of a group! Add it as a variant.
+            group_type = product_groups[handle]['type']
+            
+            if group_type == 'temp':
+                 item['Option1 Name'] = 'Temperature'
+                 item['Option1 Value'] = 'Commercial (0/70°C)'
+            elif group_type == 'channel':
+                 # Rare for DWDM base to exist as a sellable unit without channel, but if so:
+                 item['Option1 Name'] = 'Channel (ITU)'
+                 item['Option1 Value'] = 'Tunable / Unspecified' # Setup as needed
+            elif group_type == 'wavelength':
+                 item['Option1 Name'] = 'Wavelength'
+                 item['Option1 Value'] = 'Unspecified'
+            elif group_type == 'length':
+                 # Base DAC usually not sellable without length, but just in case
+                 item['Option1 Name'] = 'Length'
+                 item['Option1 Value'] = 'Standard'
+            
+            product_groups[handle]['variants'].append(item)
+        else:
+            # Truly standalone (reset options to Default)
+            item['Option1 Name'] = 'Title'
+            item['Option1 Value'] = 'Default Title'
+            final_standalone.append(item)
 
-    # Process grouped DACs
-    for base_bom, variants in dac_groups.items():
-        # Sort variants by length (numeric)
-        variants.sort(key=lambda x: x['_sort_len'])
+    # GENERATE ROWS FROM GROUPS
+    for key, group in product_groups.items():
+        variants = group['variants']
+        variants.sort(key=lambda x: x['_sort'])
         
-        # Define Handle for the Group
-        group_handle = base_bom.lower().replace(' ', '-').replace('--', '-')
-        
-        for i, variant in enumerate(variants):
+        for variant in variants:
             row = variant.copy()
-            # Remove internal sort key
-            del row['_sort_len']
+            del row['_sort']
+            if '_is_base' in row: del row['_is_base']
             
-            row['Handle'] = group_handle
-            row['Title'] = base_bom # Title is the Base BOM
-            
+            row['Handle'] = key
+            row['Title'] = group['base_title']
             shopify_rows.append(row)
 
-    # Add regular products
-    for prod in products:
-        shopify_rows.append(prod)
+    # GENERATE ROWS FROM STANDALONE
+    for prod in final_standalone:
+        row = prod.copy()
+        if '_sort' in row: del row['_sort']
+        if '_is_base' in row: del row['_is_base']
+        shopify_rows.append(row)
         
     # Add Missing "Classic" Products
     for missing in MISSING_PRODUCTS:
-        price = round(missing['Price'] * 1.07, 2)
+        price = round(missing['Price'] * 1.15, 2)
         row = {
             'Handle': missing['Bom'].lower().replace(' ', '-'),
             'Title': missing['Bom'],
