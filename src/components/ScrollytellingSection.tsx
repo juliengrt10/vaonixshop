@@ -1,29 +1,31 @@
 import { useEffect, useRef, useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import { CheckCircle2 } from "lucide-react";
 import qsfpModule from "@/assets/qsfp-module.jpg";
 
-const steps = [
-  {
-    title: "Compatibilité totale",
-    description: "Nos modules sont rigoureusement testés et certifiés compatibles avec tous les équipements réseau majeurs. Chaque référence est programmée selon les spécifications exactes du constructeur.",
-    highlight: "100% compatible"
-  },
-  {
-    title: "Qualité testée",
-    description: "Processus de contrôle qualité rigoureux avec tests automatisés sur banc d'essai. Chaque module passe une batterie de tests de performance, de température et de fiabilité.",
-    highlight: "Tests automatisés"
-  },
-  {
-    title: "Stock en Europe",
-    description: "Entrepôts stratégiquement situés en Europe pour une livraison rapide. Stock permanent des références les plus demandées et approvisionnement direct constructeur.",
-    highlight: "Livraison 24h"
-  }
-];
-
 const ScrollytellingSection = () => {
+  const { t } = useLanguage();
   const [activeStep, setActiveStep] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
+
+  const steps = [
+    {
+      title: t('home.whyVaonix.multiVendor.title'),
+      description: t('home.whyVaonix.multiVendor.description'),
+      highlight: t('home.scrollytelling.highlights.compatible')
+    },
+    {
+      title: t('home.whyVaonix.support.title'),
+      description: t('home.whyVaonix.support.description'),
+      highlight: t('home.scrollytelling.highlights.tests')
+    },
+    {
+      title: t('home.whyVaonix.stock.title'),
+      description: t('home.whyVaonix.stock.description'),
+      highlight: t('home.scrollytelling.highlights.delivery')
+    }
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,7 +38,7 @@ const ScrollytellingSection = () => {
       const viewportHeight = window.innerHeight;
 
       // Calculate scroll progress through the section
-      const sectionProgress = Math.max(0, Math.min(1, 
+      const sectionProgress = Math.max(0, Math.min(1,
         (scrollY + viewportHeight * 0.5 - sectionTop) / (sectionHeight * 0.8)
       ));
 
@@ -57,12 +59,12 @@ const ScrollytellingSection = () => {
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Sticky image */}
           <div className="lg:sticky lg:top-24 lg:h-screen lg:flex lg:items-center">
-            <div 
+            <div
               ref={imageRef}
               className="relative rounded-3xl overflow-hidden shadow-2xl group"
             >
-              <img 
-                src={qsfpModule} 
+              <img
+                src={qsfpModule}
                 alt="Module QSFP Vaonix"
                 className="w-full h-[500px] object-cover transition-transform duration-700 group-hover:scale-105"
               />
@@ -80,18 +82,16 @@ const ScrollytellingSection = () => {
           {/* Content steps */}
           <div className="space-y-32">
             {steps.map((step, index) => (
-              <div 
+              <div
                 key={index}
-                className={`transition-all duration-700 ${
-                  index === activeStep 
-                    ? 'opacity-100 transform translate-y-0' 
-                    : 'opacity-40 transform translate-y-8'
-                }`}
+                className={`transition-all duration-700 ${index === activeStep
+                  ? 'opacity-100 transform translate-y-0'
+                  : 'opacity-40 transform translate-y-8'
+                  }`}
               >
                 <div className="flex items-start space-x-4 mb-6">
-                  <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
-                    index === activeStep ? 'bg-primary text-white' : 'bg-primary/10 text-primary'
-                  }`}>
+                  <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-colors ${index === activeStep ? 'bg-primary text-white' : 'bg-primary/10 text-primary'
+                    }`}>
                     <CheckCircle2 className="w-6 h-6" />
                   </div>
                   <div className="flex-1">

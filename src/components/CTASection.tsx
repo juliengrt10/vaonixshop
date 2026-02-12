@@ -1,10 +1,13 @@
 import React from "react";
+import { useLanguage } from "@/context/LanguageContext";
 
 import { siteConfig } from "@/config/site";
 
 const VAONIX_CONTACT_EMAIL = siteConfig.contact.email; // à adapter si besoin
 
 const CTASection: React.FC = () => {
+  const { t, language } = useLanguage();
+
   const handleCompatibilitySubmit: React.FormEventHandler<HTMLFormElement> = (
     event
   ) => {
@@ -19,55 +22,51 @@ const CTASection: React.FC = () => {
     const need = (formData.get("need") || "").toString();
     const message = (formData.get("message") || "").toString();
 
-    const subject = `Vérification de compatibilité – ${deviceRef || "équipement"}`;
+    const subject = `${t('home.cta.email.compatibilitySubject')}${deviceRef || (language === 'fr' ? "équipement" : "equipment")}`;
 
     const bodyLines = [
-      "Bonjour Vaonix,",
+      t('home.cta.email.hello'),
       "",
-      "Je souhaite vérifier la compatibilité de modules optiques avec l’équipement suivant :",
+      t('home.cta.email.verifyIntro'),
       "",
-      deviceRef ? `• Référence équipement : ${deviceRef}` : "",
-      company ? `• Société : ${company}` : "",
-      need ? `• Besoin : ${need}` : "",
+      deviceRef ? `• ${t('home.cta.form.labels.device')} : ${deviceRef}` : "",
+      company ? `• ${t('home.cta.form.labels.company')} : ${company}` : "",
+      need ? `• ${t('home.cta.form.labels.need')} : ${need}` : "",
       "",
-      message ? `Message complémentaire :\n${message}\n` : "",
-      "Merci de revenir vers moi avec une recommandation de modules compatibles.",
+      message ? `${t('home.cta.form.labels.message')} :\n${message}\n` : "",
+      t('home.cta.email.thanks'),
       "",
-      name ? `Cordialement,\n${name}` : "",
+      name ? `${t('home.cta.email.regards')}\n${name}` : "",
       email ? `\nEmail : ${email}` : "",
-    ]
-      .filter(Boolean)
-      .join("\n");
+    ];
 
     const mailtoLink = `mailto:${VAONIX_CONTACT_EMAIL}?subject=${encodeURIComponent(
       subject
-    )}&body=${encodeURIComponent(bodyLines)}`;
+    )}&body=${encodeURIComponent(bodyLines.filter(Boolean).join("\n"))}`;
 
     window.location.href = mailtoLink;
   };
 
   const handleQuoteClick = () => {
-    const subject = "Demande de devis – Modules optiques Vaonix";
-    const body = [
-      "Bonjour Vaonix,",
+    const subject = t('home.cta.email.quoteSubject');
+
+    const bodyLines = [
+      t('home.cta.email.hello'),
       "",
-      "Je souhaite obtenir un devis pour des modules optiques.",
+      t('home.cta.email.quoteIntro'),
       "",
-      "Merci de m’indiquer vos meilleures conditions (prix, délai, compatibilité).",
+      t('home.cta.email.quoteConditions'),
       "",
-      "Références / besoins (à compléter) :",
-      "- Référence(s) équipement(s) :",
-      "- Format(s) souhaité(s) (SFP, SFP+, QSFP, QSFP-DD, etc.) :",
-      "- Débit(s) (1G, 10G, 40G, 100G, 400G, etc.) :",
-      "- Distance(s) :",
+      t('home.cta.email.quoteSpecs'),
+      ...(t('home.cta.email.quoteSpecsList') as unknown as string[]),
       "",
-      "Cordialement,",
+      t('home.cta.email.regards'),
       "",
-    ].join("\n");
+    ];
 
     const mailtoLink = `mailto:${VAONIX_CONTACT_EMAIL}?subject=${encodeURIComponent(
       subject
-    )}&body=${encodeURIComponent(body)}`;
+    )}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
 
     window.location.href = mailtoLink;
   };
@@ -79,23 +78,18 @@ const CTASection: React.FC = () => {
           {/* Colonne gauche : texte + CTA */}
           <div className="space-y-6">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-              Accompagnement sur mesure
+              {t('home.cta.eyebrow')}
             </p>
 
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
-              Un doute sur la{" "}
-              <span className="text-gradient">compatibilité&nbsp;?</span>
+              {t('home.cta.title')}
+              <span className="text-gradient">{t('home.cta.titleHighlight')}</span>
               <br className="hidden md:block" />
-              Laissez-nous vérifier pour vous.
+              {t('home.cta.subtitle')}
             </h2>
 
             <p className="text-base md:text-lg text-muted-foreground max-w-xl">
-              Nous validons la compatibilité constructeur{" "}
-              <span className="font-medium">
-                (Cisco, Juniper, Arista, HP, Dell…)
-              </span>{" "}
-              et proposons la référence la plus fiable pour votre
-              équipement et votre architecture réseau.
+              {t('home.cta.description')}
             </p>
 
             <div className="flex flex-wrap gap-3">
@@ -104,23 +98,23 @@ const CTASection: React.FC = () => {
                 onClick={handleQuoteClick}
                 className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-md shadow-primary/30"
               >
-                Demande de devis instantané
+                {t('nav.quote')}
               </button>
 
               <a
                 href="#compatibility-form"
                 className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-medium border border-primary/40 bg-background/40 text-foreground hover:border-primary hover:bg-primary/5 transition-colors"
               >
-                Vérification de compatibilité constructeur
+                {t('home.cta.buttons.compatibility')}
               </a>
             </div>
 
             <div className="pt-4 border-t border-border/60 text-xs md:text-sm text-muted-foreground flex flex-wrap gap-x-4 gap-y-1">
-              <span>🛠️ Support ingénierie inclus</span>
+              <span>🛠️ {t('home.cta.features.support')}</span>
               <span>•</span>
-              <span>🔄 Expertise multi-constructeurs</span>
+              <span>🔄 {t('home.cta.features.expertise')}</span>
               <span>•</span>
-              <span>⏱️ Réponse dans la journée</span>
+              <span>⏱️ {t('home.cta.features.response')}</span>
             </div>
           </div>
 
@@ -130,37 +124,35 @@ const CTASection: React.FC = () => {
             className="rounded-2xl border border-primary/15 bg-background/80 backdrop-blur-sm p-6 md:p-7 space-y-5"
           >
             <h3 className="text-lg md:text-xl font-semibold mb-1">
-              Vérifier la compatibilité d’un équipement
+              {t('home.cta.form.title')}
             </h3>
             <p className="text-sm text-muted-foreground mb-2">
-              Indiquez la référence de votre switch, routeur ou équipement, ainsi
-              que votre besoin. Nous vous recommandons le module compatible le
-              plus adapté.
+              {t('home.cta.form.subtitle')}
             </p>
 
             <form className="space-y-4" onSubmit={handleCompatibilitySubmit}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <label className="text-xs font-medium text-muted-foreground">
-                    Nom / Prénom
+                    {t('home.cta.form.labels.name')}
                   </label>
                   <input
                     name="name"
                     type="text"
                     className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    placeholder="Jean Dupont"
+                    placeholder={t('home.cta.form.placeholders.name')}
                   />
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-xs font-medium text-muted-foreground">
-                    Société
+                    {t('home.cta.form.labels.company')}
                   </label>
                   <input
                     name="company"
                     type="text"
                     className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    placeholder="Opérateur / Intégrateur / Entreprise"
+                    placeholder={t('home.cta.form.placeholders.company')}
                   />
                 </div>
               </div>
@@ -174,20 +166,20 @@ const CTASection: React.FC = () => {
                     name="email"
                     type="email"
                     className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    placeholder="vous@entreprise.com"
+                    placeholder="you@company.com"
                     required
                   />
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-xs font-medium text-muted-foreground">
-                    Réf. équipement / constructeur
+                    {t('home.cta.form.labels.device')}
                   </label>
                   <input
                     name="deviceRef"
                     type="text"
                     className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    placeholder="Ex : Cisco C9500-24Y4C"
+                    placeholder={t('home.cta.form.placeholders.device')}
                     required
                   />
                 </div>
@@ -195,25 +187,25 @@ const CTASection: React.FC = () => {
 
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-muted-foreground">
-                  Besoin (débit, distance, format…)
+                  {t('home.cta.form.labels.need')}
                 </label>
                 <input
                   name="need"
                   type="text"
                   className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-                  placeholder="Ex : 10G SFP+ LR 10 km, 100G QSFP28 LR4, etc."
+                  placeholder={t('home.cta.form.placeholders.need')}
                 />
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-muted-foreground">
-                  Message complémentaire
+                  {t('home.cta.form.labels.message')}
                 </label>
                 <textarea
                   name="message"
                   rows={3}
                   className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
-                  placeholder="Topologie, contraintes spécifiques, nombre de liens, délais…"
+                  placeholder={t('home.cta.form.placeholders.message')}
                 />
               </div>
 
@@ -221,13 +213,11 @@ const CTASection: React.FC = () => {
                 type="submit"
                 className="w-full mt-2 inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
               >
-                Envoyer ma demande de vérification
+                {t('home.cta.form.submit')}
               </button>
 
               <p className="text-[11px] text-muted-foreground mt-2">
-                En cliquant sur “Envoyer”, votre logiciel de messagerie s’ouvrira
-                avec un email pré-rempli à destination de Vaonix. Vous pourrez
-                le relire et le compléter avant envoi.
+                {t('home.cta.form.disclaimer')}
               </p>
             </form>
           </div>

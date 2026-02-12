@@ -44,7 +44,7 @@ export const siteConfig = {
   // SEO
   seo: {
     title: "Vaonix — Modules SFP, SFP+, QSFP, QSFP-DD | Compatibilité multi-constructeurs",
-    description: "Modules optiques de confiance. Compatibilité multi-constructeurs, stock européen, support technique expert.",
+    description: "Modules optiques de confiance. Compatibilité multi-constructeurs, stock français, support technique expert.",
     ogImage: "/og/vaonix-hero.jpg",
     keywords: ["modules optiques", "SFP", "SFP+", "QSFP", "QSFP-DD", "compatibilité", "multi-constructeurs"]
   }

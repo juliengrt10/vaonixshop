@@ -54,12 +54,12 @@ export const PRODUCT_FRAGMENT = `
 `;
 
 export const GET_COLLECTION_PRODUCTS = `
-  query getCollectionProducts($handle: String!, $first: Int!, $after: String) {
+  query getCollectionProducts($handle: String!, $first: Int!, $after: String, $sortKey: ProductCollectionSortKeys, $reverse: Boolean) {
     collection(handle: $handle) {
       id
       handle
       title
-      products(first: $first, after: $after) {
+      products(first: $first, after: $after, sortKey: $sortKey, reverse: $reverse) {
         edges {
           node {
             ...ProductFragment
@@ -87,8 +87,8 @@ export const GET_PRODUCT_BY_HANDLE = `
 `;
 
 export const SEARCH_PRODUCTS = `
-  query searchProducts($query: String!, $first: Int!, $after: String) {
-    products(query: $query, first: $first, after: $after) {
+  query searchProducts($query: String!, $first: Int!, $after: String, $sortKey: ProductSortKeys, $reverse: Boolean) {
+    products(query: $query, first: $first, after: $after, sortKey: $sortKey, reverse: $reverse) {
       edges {
         node {
           ...ProductFragment

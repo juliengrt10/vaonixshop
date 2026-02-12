@@ -4,9 +4,11 @@ import { Header } from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Search } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 const NotFound = () => {
   const location = useLocation();
+  const { t } = useLanguage();
 
   useEffect(() => {
     console.error(
@@ -25,25 +27,25 @@ const NotFound = () => {
             <div className="relative">
               <h1 className="text-9xl font-bold text-primary/10 select-none">404</h1>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-2xl font-bold text-foreground">Page Introuvable</span>
+                <span className="text-2xl font-bold text-foreground">{t('notFound.title')}</span>
               </div>
             </div>
 
             <p className="text-muted-foreground text-lg">
-              Il semblerait que vous ayez perdu le signal. Cette page n'existe pas ou a été déplacée.
+              {t('notFound.subtitle')}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Button asChild size="lg" className="gap-2">
                 <Link to="/">
                   <ArrowLeft className="w-4 h-4" />
-                  Retour à l'accueil
+                  {t('notFound.backHome')}
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="gap-2">
                 <Link to="/produits">
                   <Search className="w-4 h-4" />
-                  Voir nos produits
+                  {t('notFound.viewProducts')}
                 </Link>
               </Button>
             </div>

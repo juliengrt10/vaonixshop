@@ -38,12 +38,12 @@ export const Hero = () => {
           {/* Main Title */}
           <h1 className="text-4xl lg:text-6xl font-heading font-bold text-foreground leading-tight">
             <span className="block">Modules optiques</span>
-            <span className="block text-brand">SFP, SFP+, QSFP, QSFP-DD</span>
+            <span className="block text-brand">SFP, SFP+, QSFP, QSFP-DD, OSFP</span>
           </h1>
 
           {/* Subtitle */}
           <p className="text-lg lg:text-xl text-muted-foreground max-w-2xl leading-relaxed">
-            Compatibilité multi-constructeurs, stock européen, support technique expert.
+            TEST VAONIX
           </p>
 
           {/* CTAs */}
@@ -98,41 +98,18 @@ export const Hero = () => {
               alt="Modules optiques Vaonix SFP, SFP+, QSFP, QSFP-DD de haute qualité"
               className="w-full h-auto object-cover"
               loading="eager"
-              decoding="async"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
-
-            {/* Overlay gradient */}
             <div className="absolute inset-0 bg-gradient-to-t from-brand/20 to-transparent" />
-
-            {/* Floating elements */}
             <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 text-sm font-medium text-foreground shadow-lg">
               ✓ Compatible multi-constructeurs
             </div>
-
             <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 text-sm font-medium text-foreground shadow-lg">
               ✓ Testé & certifié
             </div>
           </div>
-
-          {/* Decorative elements */}
-          <div className="absolute -top-4 -right-4 w-24 h-24 bg-brand/10 rounded-full blur-2xl" />
-          <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-brand/5 rounded-full blur-3xl" />
         </motion.div>
       </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-      >
-        <div className="flex flex-col items-center space-y-2 text-muted-foreground">
-          <span className="text-xs uppercase tracking-wide">Découvrir</span>
-          <div className="w-px h-8 bg-gradient-to-b from-brand to-transparent" />
-        </div>
-      </motion.div>
     </section>
   );
 };

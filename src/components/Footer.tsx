@@ -1,21 +1,25 @@
 import { Shield, Award, Phone, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 import { siteConfig } from "@/config/site";
+import { useLanguage } from "@/context/LanguageContext";
 
 // Footer component for Vaonix site
 
 const CONTACT_EMAIL = siteConfig.contact.email;
 const CONTACT_PHONE_DISPLAY = siteConfig.contact.phone; // texte affiché
 const CONTACT_PHONE_TEL = "+33175498130"; // format tel:
-const CONTACT_HOURS = "Lun–Ven 9h–18h";
 
 const Footer = () => {
+  const { t, language } = useLanguage();
+
+  const CONTACT_HOURS = language === 'fr' ? "Lun–Ven 9h–18h" : "Mon–Fri 9am–6pm";
+
   const links = {
     legal: [
-      { name: "CGV", to: "/cgv" },
-      { name: "Mentions légales", to: "/mentions-legales" },
-      { name: "Livraison & retours", to: "/livraison-retours" },
-      { name: "Contact", to: "/contact" },
+      { name: language === 'fr' ? "CGV" : "T&C", to: "/cgv" },
+      { name: language === 'fr' ? "Mentions légales" : "Legal Notice", to: "/mentions-legales" },
+      { name: language === 'fr' ? "Livraison & retours" : "Delivery & Returns", to: "/livraison-retours" },
+      { name: t('nav.contact'), to: "/contact" },
     ],
   };
 
@@ -27,24 +31,25 @@ const Footer = () => {
           <div className="md:col-span-2">
             <img src="/images/vaonix-logo.png" alt="Vaonix" className="h-14 mb-5" />
             <p className="text-gray-300 leading-relaxed mb-6 max-w-md">
-              Spécialiste européen des modules optiques pour infrastructures réseau.
-              Compatibilité garantie, qualité certifiée, support technique expert.
+              {language === 'fr'
+                ? "Spécialiste européen des modules optiques pour infrastructures réseau. Compatibilité garantie, qualité certifiée, support technique expert."
+                : "European specialist in optical modules for network infrastructures. Guaranteed compatibility, certified quality, expert technical support."}
             </p>
             <div className="flex flex-wrap items-center gap-4">
               <div className="flex items-center space-x-2">
                 <Shield className="w-5 h-5 text-primary" />
-                <span className="text-sm text-gray-300">Certifié CE</span>
+                <span className="text-sm text-gray-300">{language === 'fr' ? "Certifié CE" : "CE Certified"}</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Award className="w-5 h-5 text-primary" />
-                <span className="text-sm text-gray-300">Conforme RoHS</span>
+                <span className="text-sm text-gray-300">{language === 'fr' ? "Conforme RoHS" : "RoHS Compliant"}</span>
               </div>
             </div>
           </div>
 
           {/* Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-6 text-white">Informations</h4>
+            <h4 className="text-lg font-semibold mb-6 text-white">{language === 'fr' ? "Informations" : "Information"}</h4>
             <ul className="space-y-3">
               {links.legal.map((link, index) => (
                 <li key={index}>
@@ -86,8 +91,9 @@ const Footer = () => {
               <p>🕒 {CONTACT_HOURS}</p>
 
               <p className="text-xs text-gray-400">
-                Support technique prioritaire pour les projets opérateurs, intégrateurs
-                et data centers.
+                {language === 'fr'
+                  ? "Support technique prioritaire pour les projets opérateurs, intégrateurs et data centers."
+                  : "Priority technical support for operator, integrator and data center projects."}
               </p>
             </div>
           </div>
@@ -97,10 +103,12 @@ const Footer = () => {
         <div className="pt-8 border-t border-gray-600">
           <div className="flex flex-col md:flex-row justify-between items-center gap-3">
             <p className="text-gray-400 text-sm">
-              © 2025 Vaonix Shop. Tous droits réservés.
+              © 2025 Vaonix Shop. {language === 'fr' ? "Tous droits réservés." : "All rights reserved."}
             </p>
             <p className="text-gray-400 text-sm">
-              🇪🇺 Stock européen • Livraison rapide • Support expert
+              {language === 'fr'
+                ? "🇫🇷 Stock français • Livraison rapide • Support expert"
+                : "🇫🇷 French Stock • Fast Shipping • Expert Support"}
             </p>
           </div>
         </div>

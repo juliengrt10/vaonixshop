@@ -2,15 +2,19 @@ import { useState, useEffect } from 'react';
 import { storefrontRequest, type ShopifyProduct, type ShopifyCollection } from '@/lib/shopify';
 import { GET_COLLECTION_PRODUCTS, GET_PRODUCT_BY_HANDLE, SEARCH_PRODUCTS } from '@/lib/shopify-queries';
 import { siteConfig } from '@/config/site';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface UseShopifyProductsOptions {
   collection?: string;
   first?: number;
   search?: string;
   query?: string; // Filtres Shopify côté serveur
+  sortKey?: string;
+  reverse?: boolean;
 }
 
 export const useShopifyProducts = (options: UseShopifyProductsOptions = {}) => {
+  const { t } = useLanguage();
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +22,7 @@ export const useShopifyProducts = (options: UseShopifyProductsOptions = {}) => {
   const [endCursor, setEndCursor] = useState<string | null>(null);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const { collection, first = 50, search, query } = options;
+  const { collection, first = 50, search, query, sortKey, reverse } = options;
 
   const fetchProducts = async () => {
     if (!siteConfig.shopify.enabled || !siteConfig.shopify.domain) {
@@ -31,7 +35,7 @@ export const useShopifyProducts = (options: UseShopifyProductsOptions = {}) => {
 
     try {
       let gqlQuery = '';
-      let variables: any = { first };
+      let variables: any = { first, sortKey, reverse };
 
       // Prioriser le paramètre query (filtres Shopify)
       if (query) {
@@ -65,7 +69,7 @@ export const useShopifyProducts = (options: UseShopifyProductsOptions = {}) => {
       // The error is already logged in storefrontRequest, but we can log context here
       console.error('Error fetching Shopify products:', err);
       // More user-friendly error message could be derived from err if needed
-      setError('Impossible de charger les produits. Veuillez vérifier votre connexion.');
+      setError(t('shopify.loadProductsError'));
     } finally {
       setLoading(false);
     }
@@ -81,7 +85,7 @@ export const useShopifyProducts = (options: UseShopifyProductsOptions = {}) => {
 
     try {
       let gqlQuery = '';
-      let variables: any = { first, after: endCursor };
+      let variables: any = { first, after: endCursor, sortKey, reverse };
 
       if (query) {
         gqlQuery = SEARCH_PRODUCTS;
@@ -135,6 +139,7 @@ export const useShopifyProducts = (options: UseShopifyProductsOptions = {}) => {
 };
 
 export const useShopifyProduct = (handle: string) => {
+  const { t } = useLanguage();
   const [product, setProduct] = useState<ShopifyProduct | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -155,7 +160,7 @@ export const useShopifyProduct = (handle: string) => {
       setProduct(response.data?.product || null);
     } catch (err) {
       console.error('Error fetching Shopify product:', err);
-      setError('Impossible de charger le produit. Veuillez réactualiser.');
+      setError(t('shopify.loadProductError'));
     } finally {
       setLoading(false);
     }

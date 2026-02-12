@@ -6,12 +6,16 @@ import { Menu, X, Phone } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import CartSidebar from "@/components/CartSidebar";
 import { ProductSearch } from "@/components/ProductSearch";
+import { LanguageToggle } from "@/components/LanguageToggle";
+import { useLanguage } from "@/context/LanguageContext";
 
 export const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const { t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,12 +45,11 @@ export const Header = () => {
   };
 
   const navItems = [
-    { label: "Produits", href: "/produits", isRoute: true },
-    { label: "À propos", href: "/a-propos", isRoute: true },
-    { label: "Ressources", href: "/ressources", isRoute: true },
-    { label: "Blog", href: "/blog", isRoute: true },
+    { label: t('nav.products'), href: "/products", isRoute: true },
+    { label: t('nav.about'), href: "/a-propos", isRoute: true },
+    { label: t('nav.resources'), href: "/ressources", isRoute: true },
     // Contact pointe désormais vers la page /contact
-    { label: "Contact", href: "/contact", isRoute: true },
+    { label: t('nav.contact'), href: "/contact", isRoute: true },
   ];
 
   return (
@@ -62,9 +65,9 @@ export const Header = () => {
           <Link
             to="/"
             className="text-xl font-heading font-semibold text-foreground hover:text-brand transition-colors"
-            aria-label="Retour à l'accueil"
+            aria-label={t('common.home')}
           >
-            <img src="/images/vaonix-logo.png" alt={siteConfig.name} className="h-8 w-auto" />
+            <img src="/images/vaonix-logo-transparent.png" alt={siteConfig.name} className="h-8 w-auto" />
           </Link>
         </div>
 
@@ -101,22 +104,24 @@ export const Header = () => {
           <a
             href={`tel:${siteConfig.contact.phone}`}
             className="flex items-center text-sm text-muted-foreground hover:text-brand transition-colors whitespace-nowrap"
-            aria-label={`Appeler ${siteConfig.contact.phone}`}
+            aria-label={`Call ${siteConfig.contact.phone}`}
           >
             <Phone className="w-4 h-4 mr-2" />
             {siteConfig.contact.phone}
           </a>
+          <LanguageToggle />
           <CartSidebar />
           <Button
             onClick={handleCTAClick}
             className="bg-brand hover:bg-brand-600 text-white btn-brand whitespace-nowrap"
           >
-            Demander un devis
+            {t('nav.quote')}
           </Button>
         </div>
 
         {/* Mobile Menu Button */}
-        <div className="flex items-center gap-4 lg:hidden">
+        <div className="flex items-center gap-2 lg:hidden">
+          <LanguageToggle />
           <CartSidebar />
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -168,7 +173,7 @@ export const Header = () => {
                   onClick={handleCTAClick}
                   className="flex-1 bg-brand hover:bg-brand-600 text-white btn-brand"
                 >
-                  Demander un devis
+                  {t('nav.quote')}
                 </Button>
               </div>
             </div>

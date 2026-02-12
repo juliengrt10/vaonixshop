@@ -4,36 +4,39 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Target, Users, Award, Globe, Shield, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function AboutPage() {
+  const { t, language } = useLanguage();
+
   const values = [
     {
       icon: Target,
-      title: "Excellence technique",
-      description: "Nous sélectionnons et testons rigoureusement chaque module pour garantir des performances optimales."
+      title: t('about.values.excellence.title'),
+      description: t('about.values.excellence.description')
     },
     {
       icon: Shield,
-      title: "Fiabilité & Qualité",
-      description: "Tous nos produits sont soumis à des contrôles qualité stricts et bénéficient d'une garantie 2 ans."
+      title: t('about.values.reliability.title'),
+      description: t('about.values.reliability.description')
     },
     {
       icon: Zap,
-      title: "Réactivité",
-      description: "Support technique expert et livraisons rapides depuis notre stock européen."
+      title: t('about.values.responsiveness.title'),
+      description: t('about.values.responsiveness.description')
     },
     {
       icon: Globe,
-      title: "Compatibilité universelle",
-      description: "Nos modules sont compatibles avec tous les grands constructeurs du marché."
+      title: t('about.values.compatibility.title'),
+      description: t('about.values.compatibility.description')
     }
   ];
 
   const stats = [
-    { number: "10+", label: "Années d'expérience" },
-    { number: "500+", label: "Références produits" },
-    { number: "1000+", label: "Clients satisfaits" },
-    { number: "99.9%", label: "Taux de compatibilité" }
+    { number: "10+", label: t('about.stats.experience') },
+    { number: "500+", label: t('about.stats.references') },
+    { number: "1000+", label: t('about.stats.customers') },
+    { number: "99.9%", label: t('about.stats.compatibility') }
   ];
 
   return (
@@ -51,12 +54,10 @@ export default function AboutPage() {
               className="text-center max-w-4xl mx-auto"
             >
               <h1 className="text-4xl lg:text-5xl font-heading font-bold text-foreground mb-6">
-                À propos de Vaonix
+                {t('about.title')}
               </h1>
               <p className="text-xl text-muted-foreground leading-relaxed">
-                Spécialiste européen des modules optiques compatibles multi-constructeurs,
-                Vaonix accompagne les entreprises dans leurs projets d'infrastructure réseau
-                avec expertise et fiabilité.
+                {t('about.subtitle')}
               </p>
             </motion.div>
           </div>
@@ -96,24 +97,21 @@ export default function AboutPage() {
                 transition={{ duration: 0.6 }}
               >
                 <h2 className="text-3xl font-heading font-bold text-foreground mb-6">
-                  Notre histoire
+                  {t('about.story.title')}
                 </h2>
                 <div className="prose prose-lg text-muted-foreground space-y-4">
-                  <p>
-                    Fondée par des ingénieurs passionnés de télécommunications, Vaonix est née
-                    du constat que les modules optiques d'origine constructeur représentent un
-                    coût disproportionné par rapport à leur valeur technique réelle.
-                  </p>
-                  <p>
-                    Nous avons développé une expertise unique dans la sélection, le test et la
-                    validation de modules optiques compatibles, offrant les mêmes performances
-                    que les références d'origine à des prix plus justes.
-                  </p>
-                  <p>
-                    Aujourd'hui, nous servons des centaines d'entreprises en Europe, des PME
-                    aux grandes organisations, en leur fournissant des solutions fiables pour
-                    leurs infrastructures critiques.
-                  </p>
+                  <p>{t('about.story.p1')}</p>
+                  <p>{t('about.story.p2')}</p>
+                  <ul className="list-disc pl-4 space-y-1">
+                    <li>{t('about.story.bullet1')}</li>
+                    <li>{t('about.story.bullet2')}</li>
+                  </ul>
+                  <p>{t('about.story.p3')}</p>
+                  <p>{t('about.story.p4')}</p>
+                  <p>{t('about.story.p5')}</p>
+                  <p className="font-semibold">{t('about.story.p6')}</p>
+                  <p>{t('about.story.p7')}</p>
+                  <p>{t('about.story.p8')}</p>
                 </div>
               </motion.div>
 
@@ -133,7 +131,7 @@ export default function AboutPage() {
                 </div>
                 <div className="absolute -bottom-4 -right-4 bg-white p-6 rounded-xl shadow-lg border border-border">
                   <div className="text-2xl font-bold text-brand">2018</div>
-                  <div className="text-sm text-muted-foreground">Année de création</div>
+                  <div className="text-sm text-muted-foreground">{t('about.story.founded')}</div>
                 </div>
               </motion.div>
             </div>
@@ -150,10 +148,10 @@ export default function AboutPage() {
               className="text-center mb-12"
             >
               <h2 className="text-3xl font-heading font-bold text-foreground mb-4">
-                Nos valeurs
+                {t('about.values.title')}
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Ces principes guident chacune de nos actions et décisions au quotidien
+                {t('about.values.subtitle')}
               </p>
             </motion.div>
 
@@ -194,10 +192,10 @@ export default function AboutPage() {
               className="text-center mb-12"
             >
               <h2 className="text-3xl font-heading font-bold text-foreground mb-4">
-                Notre équipe
+                {t('about.team.title')}
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Une équipe d'experts dédiés à votre réussite
+                {t('about.team.subtitle')}
               </p>
             </motion.div>
 
@@ -213,12 +211,12 @@ export default function AboutPage() {
                       <Users className="w-10 h-10 text-brand" />
                     </div>
                     <h3 className="font-semibold text-foreground mb-2">
-                      Équipe commerciale
+                      {t('about.team.sales.title')}
                     </h3>
                     <p className="text-sm text-muted-foreground mb-3">
-                      Conseillers techniques spécialisés pour vous accompagner dans vos projets
+                      {t('about.team.sales.description')}
                     </p>
-                    <Badge variant="secondary">3 experts</Badge>
+
                   </CardContent>
                 </Card>
               </motion.div>
@@ -234,12 +232,12 @@ export default function AboutPage() {
                       <Award className="w-10 h-10 text-brand" />
                     </div>
                     <h3 className="font-semibold text-foreground mb-2">
-                      Support technique
+                      {t('about.team.support.title')}
                     </h3>
                     <p className="text-sm text-muted-foreground mb-3">
-                      Ingénieurs réseau pour résoudre vos problématiques les plus complexes
+                      {t('about.team.support.description')}
                     </p>
-                    <Badge variant="secondary">3 ingénieurs</Badge>
+
                   </CardContent>
                 </Card>
               </motion.div>
@@ -255,12 +253,12 @@ export default function AboutPage() {
                       <Shield className="w-10 h-10 text-brand" />
                     </div>
                     <h3 className="font-semibold text-foreground mb-2">
-                      Qualité & Tests
+                      {t('about.team.quality.title')}
                     </h3>
                     <p className="text-sm text-muted-foreground mb-3">
-                      Équipe dédiée aux tests de compatibilité et contrôle qualité
+                      {t('about.team.quality.description')}
                     </p>
-                    <Badge variant="secondary">2 techniciens</Badge>
+
                   </CardContent>
                 </Card>
               </motion.div>
@@ -278,10 +276,10 @@ export default function AboutPage() {
               className="text-center mb-12"
             >
               <h2 className="text-3xl font-heading font-bold text-foreground mb-4">
-                Certifications & Partenariats
+                {t('about.certifications.title')}
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Nos engagements qualité reconnus par les organismes de certification
+                {t('about.certifications.subtitle')}
               </p>
             </motion.div>
 

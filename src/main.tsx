@@ -1,6 +1,8 @@
 import { createRoot } from 'react-dom/client'
 import { HelmetProvider } from 'react-helmet-async'
 import { CartProvider } from '@/context/CartContext'
+
+
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { ErrorFallback } from '@/components/ErrorFallback'
 import { initGA } from '@/lib/analytics'

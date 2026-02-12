@@ -1,6 +1,8 @@
 export interface ProductCategory {
   id: string;
   name: string;
+  description?: string;
+  image?: string;
   subcategories?: ProductSubcategory[];
 }
 
@@ -10,73 +12,135 @@ export interface ProductSubcategory {
   description?: string;
 }
 
+/**
+ * NOUVELLE STRUCTURE: Organisation par Form Factor
+ * Structure professionnelle et claire pour les clients
+ */
 export const PRODUCT_CATEGORIES: ProductCategory[] = [
   {
-    id: 'infiniband',
-    name: 'Réseau InfiniBand',
+    id: 'sfp-modules',
+    name: 'Modules SFP / SFP+',
+    description: 'Modules 1G, 10G pour fibre optique et cuivre',
+    image: '/images/products/sfp-base.png',
     subcategories: [
-      { id: 'infiniband-1.6t-osfp', name: '1,6T OSFP InfiniBand' },
-      { id: 'infiniband-800g-osfp', name: '800G OSFP InfiniBand' },
-      { id: 'infiniband-400g-osfp-qsfp112', name: '400G OSFP/QSFP112 InfiniBand' },
-      { id: 'infiniband-200g-qsfp56', name: '200G QSFP56 InfiniBand' },
-      { id: 'infiniband-custom', name: '200/400/800G InfiniBand Personnalisé' }
+      { id: 'sfp-1g', name: 'SFP 1G', description: '1000BASE-SX/LX/T/ZX' },
+      { id: 'sfp-10g', name: 'SFP+ 10G', description: '10GBASE-SR/LR/ER/ZR' },
+      { id: 'sfp-bidi', name: 'SFP BiDi', description: 'Bidirectionnel 1G/10G' },
+      { id: 'sfp-cwdm', name: 'SFP CWDM', description: '1G/10G CWDM' },
+      { id: 'sfp-dwdm', name: 'SFP DWDM', description: '1G/10G DWDM' },
     ]
   },
   {
-    id: 'ethernet',
-    name: 'Réseau Ethernet',
+    id: 'sfp28-modules',
+    name: 'Modules SFP28',
+    description: 'Modules 25G haute performance',
+    image: '/images/products/sfp-base.png',
     subcategories: [
-      { id: 'ethernet-800g', name: '800G OSFP/QSFP-DD' },
-      { id: 'ethernet-400g', name: '400G OSFP/QSFP112/QSFP-DD' },
-      { id: 'ethernet-200g', name: '200G QSFP-DD/QSFP56' },
-      { id: 'ethernet-dac-aoc', name: 'Câbles Ethernet DAC/AOC' },
-      { id: 'ethernet-custom', name: '200/400/800G Personnalisé' }
+      { id: 'sfp28-25g-sr', name: 'SFP28 25G SR', description: '25GBASE-SR (100m)' },
+      { id: 'sfp28-25g-lr', name: 'SFP28 25G LR', description: '25GBASE-LR (10km)' },
+      { id: 'sfp28-25g-er', name: 'SFP28 25G ER', description: '25GBASE-ER (40km)' },
+      { id: 'sfp28-25g-cwdm', name: 'SFP28 25G CWDM', description: 'CWDM 25G' },
+      { id: 'sfp28-25g-dwdm', name: 'SFP28 25G DWDM', description: 'DWDM 25G' },
     ]
   },
   {
-    id: 'modules-high-speed',
-    name: '10/25/40/100G Modules',
+    id: 'qsfp-modules',
+    name: 'Modules QSFP+ / QSFP28',
+    description: 'Modules 40G et 100G',
+    image: '/images/products/qsfp-base.png',
     subcategories: [
-      { id: 'modules-100g', name: '100G QSFP28/SFP-DD' },
-      { id: 'modules-50g', name: '50G QSFP28/SFP56' },
-      { id: 'modules-40g', name: '40G QSFP+' },
-      { id: 'modules-25g', name: '25G SFP28' },
-      { id: 'modules-100g-cfp', name: '100G CFP/CFP2/CFP4' }
+      { id: 'qsfp-40g', name: 'QSFP+ 40G', description: '40GBASE-SR4/LR4/ER4' },
+      { id: 'qsfp28-100g-sr4', name: 'QSFP28 100G SR4', description: '100GBASE-SR4 (100m)' },
+      { id: 'qsfp28-100g-lr4', name: 'QSFP28 100G LR4', description: '100GBASE-LR4 (10km)' },
+      { id: 'qsfp28-100g-er4', name: 'QSFP28 100G ER4', description: '100GBASE-ER4 (40km)' },
+      { id: 'qsfp28-100g-cwdm', name: 'QSFP28 100G CWDM4', description: 'CWDM4 100G' },
+      { id: 'qsfp28-100g-dwdm', name: 'QSFP28 100G DWDM', description: 'DWDM 100G' },
     ]
   },
   {
-    id: 'modules-low-speed',
-    name: '1/2,5G Modules',
+    id: 'qsfp-dd-modules',
+    name: 'Modules QSFP-DD',
+    description: 'Modules 200G, 400G, 800G nouvelle génération',
+    image: '/images/products/qsfp-dd-base.png',
     subcategories: [
-      { id: 'modules-2.5g', name: '2,5G SFP' },
-      { id: 'modules-1g', name: '1G SFP' },
-      { id: 'modules-100m', name: '100M SFP' },
-      { id: 'modules-low-custom', name: '100M/1G/2,5G Personnalisé' }
+      { id: 'qsfp-dd-200g', name: 'QSFP-DD 200G', description: '200GBASE-SR4/FR4/LR4' },
+      { id: 'qsfp-dd-400g-sr8', name: 'QSFP-DD 400G SR8', description: '400GBASE-SR8 (100m)' },
+      { id: 'qsfp-dd-400g-dr4', name: 'QSFP-DD 400G DR4', description: '400GBASE-DR4 (500m)' },
+      { id: 'qsfp-dd-400g-fr4', name: 'QSFP-DD 400G FR4', description: '400GBASE-FR4 (2km)' },
+      { id: 'qsfp-dd-400g-lr4', name: 'QSFP-DD 400G LR4', description: '400GBASE-LR4 (10km)' },
+      { id: 'qsfp-dd-800g', name: 'QSFP-DD 800G', description: '800GBASE-SR8/DR8/2xFR4' },
     ]
   },
   {
-    id: 'cables',
-    name: 'Câbles DAC/AOC/ACC/AEC',
+    id: 'osfp-modules',
+    name: 'Modules OSFP',
+    description: 'Modules 400G, 800G, 1.6T ultra haute performance',
+    image: '/images/products/osfp-module.jpg',
     subcategories: [
-      { id: 'cables-800g-1.6t', name: '800G/1,6T OSFP/QSFP-DD' },
-      { id: 'cables-400g', name: '400G OSFP/QSFP112/QSFP-DD' },
-      { id: 'cables-200g', name: '200G QSFP-DD/QSFP56' },
-      { id: 'cables-100g', name: '100G QSFP28/SFP-DD/DSFP/SFP112' },
-      { id: 'cables-50g', name: '50/56G SFP56/QSFP+' }
+      { id: 'osfp-400g', name: 'OSFP 400G', description: '400GBASE-SR8/DR4/FR4' },
+      { id: 'osfp-800g', name: 'OSFP 800G', description: '800GBASE-SR8/DR8/2xFR4' },
+      { id: 'osfp-1.6t', name: 'OSFP 1.6T', description: '1.6T InfiniBand/Ethernet' },
     ]
   },
   {
-    id: 'optical-transmission',
-    name: 'Transmission Optique',
+    id: 'fiber-channel',
+    name: 'Fiber Channel',
+    description: 'Modules SAN et stockage',
+    image: '/images/products/sfp-base.png',
     subcategories: [
-      { id: 'optical-cfp2', name: '200G/400G CFP2 Cohérent' },
-      { id: 'optical-25g-cwdm', name: '25G CWDM/DWDM SFP28' },
-      { id: 'optical-10g-cwdm', name: '10G CWDM/DWDM SFP+' },
-      { id: 'optical-2.5g-cwdm', name: '2,5G CWDM/DWDM SFP' },
-      { id: 'optical-1g-cwdm', name: '1G CWDM/DWDM SFP' },
-      { id: 'optical-100g-dwdm', name: '100G DWDM QSFP28' }
+      { id: 'fc-8g', name: '8G Fiber Channel', description: '8GFC SFP+' },
+      { id: 'fc-16g', name: '16G Fiber Channel', description: '16GFC SFP+' },
+      { id: 'fc-32g', name: '32G Fiber Channel', description: '32GFC SFP28' },
+      { id: 'fc-64g', name: '64G Fiber Channel', description: '64GFC QSFP28' },
+      { id: 'fc-128g', name: '128G Fiber Channel', description: '128GFC QSFP28' },
     ]
-  }
+  },
+  {
+    id: 'dac-aoc-cables',
+    name: 'Câbles DAC / AOC',
+    description: 'Câbles cuivre et optiques actifs',
+    image: '/images/products/dac-cable.jpg',
+    subcategories: [
+      { id: 'dac-sfp-10g', name: 'DAC SFP+ 10G', description: '1-7m Direct Attach Copper' },
+      { id: 'dac-sfp28-25g', name: 'DAC SFP28 25G', description: '1-7m Direct Attach Copper' },
+      { id: 'dac-qsfp-40g', name: 'DAC QSFP+ 40G', description: '1-7m Direct Attach Copper' },
+      { id: 'dac-qsfp28-100g', name: 'DAC QSFP28 100G', description: '1-7m Direct Attach Copper' },
+      { id: 'dac-qsfp-dd-400g', name: 'DAC QSFP-DD 400G', description: '1-5m Direct Attach Copper' },
+      { id: 'dac-qsfp-dd-800g', name: 'DAC QSFP-DD 800G', description: '1-3m Direct Attach Copper' },
+      { id: 'aoc-sfp-10g', name: 'AOC SFP+ 10G', description: '1-100m Active Optical Cable' },
+      { id: 'aoc-qsfp28-100g', name: 'AOC QSFP28 100G', description: '1-100m Active Optical Cable' },
+      { id: 'aoc-qsfp-dd-400g', name: 'AOC QSFP-DD 400G', description: '1-100m Active Optical Cable' },
+    ]
+  },
+  {
+    id: 'dwdm-cwdm',
+    name: 'DWDM / CWDM',
+    description: 'Transmission optique multiplexée',
+    image: '/images/products/sfp-base.png',
+    subcategories: [
+      { id: 'cwdm-sfp-1g', name: 'CWDM SFP 1G', description: 'CWDM 18 canaux' },
+      { id: 'cwdm-sfp-10g', name: 'CWDM SFP+ 10G', description: 'CWDM 18 canaux' },
+      { id: 'cwdm-sfp28-25g', name: 'CWDM SFP28 25G', description: 'CWDM 18 canaux' },
+      { id: 'dwdm-sfp-1g', name: 'DWDM SFP 1G', description: 'DWDM ITU 50GHz' },
+      { id: 'dwdm-sfp-10g', name: 'DWDM SFP+ 10G', description: 'DWDM ITU 50GHz' },
+      { id: 'dwdm-sfp28-25g', name: 'DWDM SFP28 25G', description: 'DWDM ITU 50GHz' },
+      { id: 'dwdm-qsfp28-100g', name: 'DWDM QSFP28 100G', description: 'DWDM ITU 50GHz' },
+    ]
+  },
+  {
+    id: 'infiniband-hpc',
+    name: 'InfiniBand / HPC',
+    description: 'Modules pour calcul haute performance',
+    image: '/images/products/qsfp-dd-base.png',
+    subcategories: [
+      { id: 'ib-qsfp-40g', name: 'InfiniBand QDR 40G', description: 'QSFP+ 40Gb/s' },
+      { id: 'ib-qsfp28-100g', name: 'InfiniBand EDR 100G', description: 'QSFP28 100Gb/s' },
+      { id: 'ib-qsfp56-200g', name: 'InfiniBand HDR 200G', description: 'QSFP56 200Gb/s' },
+      { id: 'ib-qsfp112-400g', name: 'InfiniBand NDR 400G', description: 'QSFP112 400Gb/s' },
+      { id: 'ib-osfp-800g', name: 'InfiniBand XDR 800G', description: 'OSFP 800Gb/s' },
+      { id: 'ib-osfp-1.6t', name: 'InfiniBand 1.6T', description: 'OSFP 1.6Tb/s' },
+    ]
+  },
 ];
 
 // Compatibilités disponibles pour les produits
@@ -94,7 +158,7 @@ export const COMPATIBILITY_OPTIONS = [
 ];
 
 // Longueurs de câbles disponibles (en mètres)
-export const CABLE_LENGTHS = [1, 2, 3, 5, 10, 15];
+export const CABLE_LENGTHS = [1, 2, 3, 5, 7, 10, 15, 20, 30, 50, 100];
 
 // Canaux DWDM standards (Grille ITU 100GHz)
 export const DWDM_CHANNELS = [
@@ -165,120 +229,182 @@ export interface CategoryMapping {
 
 
 export const CATEGORY_MAPPINGS: Record<string, CategoryMapping> = {
-  // ===== INFINIBAND =====
-  'infiniband-1.6t-osfp': {
-    tags: ['FormFactor_OSFP', 'Speed_1.6T']
+  // ===== SFP / SFP+ =====
+  'sfp-1g': {
+    tags: ['FormFactor_SFP', 'Speed_1G'],
+    excludeTags: ['Tech_DWDM', 'Tech_CWDM', 'Tech_FiberChannel']
   },
-  'infiniband-800g-osfp': {
+  'sfp-10g': {
+    tags: ['FormFactor_SFP+', 'Speed_10G'],
+    excludeTags: ['Tech_DWDM', 'Tech_CWDM', 'Tech_BiDi', 'Tech_FiberChannel']
+  },
+  'sfp-bidi': {
+    tags: ['FormFactor_SFP', 'FormFactor_SFP+', 'Tech_BiDi']
+  },
+  'sfp-cwdm': {
+    tags: ['FormFactor_SFP', 'FormFactor_SFP+', 'Tech_CWDM']
+  },
+  'sfp-dwdm': {
+    tags: ['FormFactor_SFP', 'FormFactor_SFP+', 'Tech_DWDM']
+  },
+
+  // ===== SFP28 =====
+  'sfp28-25g-sr': {
+    tags: ['FormFactor_SFP28', 'Speed_25G', 'Distance_100m']
+  },
+  'sfp28-25g-lr': {
+    tags: ['FormFactor_SFP28', 'Speed_25G', 'Distance_10km']
+  },
+  'sfp28-25g-er': {
+    tags: ['FormFactor_SFP28', 'Speed_25G', 'Distance_40km']
+  },
+  'sfp28-25g-cwdm': {
+    tags: ['FormFactor_SFP28', 'Speed_25G', 'Tech_CWDM']
+  },
+  'sfp28-25g-dwdm': {
+    tags: ['FormFactor_SFP28', 'Speed_25G', 'Tech_DWDM']
+  },
+
+  // ===== QSFP+ / QSFP28 =====
+  'qsfp-40g': {
+    tags: ['FormFactor_QSFP+', 'Speed_40G'],
+    excludeTags: ['Tech_DAC', 'Tech_AOC']
+  },
+  'qsfp28-100g-sr4': {
+    tags: ['FormFactor_QSFP28', 'Speed_100G', 'Distance_100m']
+  },
+  'qsfp28-100g-lr4': {
+    tags: ['FormFactor_QSFP28', 'Speed_100G', 'Distance_10km']
+  },
+  'qsfp28-100g-er4': {
+    tags: ['FormFactor_QSFP28', 'Speed_100G', 'Distance_40km']
+  },
+  'qsfp28-100g-cwdm': {
+    tags: ['FormFactor_QSFP28', 'Speed_100G', 'Tech_CWDM']
+  },
+  'qsfp28-100g-dwdm': {
+    tags: ['FormFactor_QSFP28', 'Speed_100G', 'Tech_DWDM']
+  },
+
+  // ===== QSFP-DD =====
+  'qsfp-dd-200g': {
+    tags: ['FormFactor_QSFP-DD', 'Speed_200G']
+  },
+  'qsfp-dd-400g-sr8': {
+    tags: ['FormFactor_QSFP-DD', 'Speed_400G', 'Distance_100m']
+  },
+  'qsfp-dd-400g-dr4': {
+    tags: ['FormFactor_QSFP-DD', 'Speed_400G', 'Distance_500m']
+  },
+  'qsfp-dd-400g-fr4': {
+    tags: ['FormFactor_QSFP-DD', 'Speed_400G', 'Distance_2km']
+  },
+  'qsfp-dd-400g-lr4': {
+    tags: ['FormFactor_QSFP-DD', 'Speed_400G', 'Distance_10km']
+  },
+  'qsfp-dd-800g': {
+    tags: ['FormFactor_QSFP-DD', 'Speed_800G']
+  },
+
+  // ===== OSFP =====
+  'osfp-400g': {
+    tags: ['FormFactor_OSFP', 'Speed_400G']
+  },
+  'osfp-800g': {
     tags: ['FormFactor_OSFP', 'Speed_800G']
   },
-  'infiniband-400g-osfp-qsfp112': {
-    tags: ['FormFactor_OSFP', 'FormFactor_QSFP112', 'Speed_400G']
-  },
-  'infiniband-200g-qsfp56': {
-    tags: ['FormFactor_QSFP56', 'Speed_200G']
-  },
-  'infiniband-custom': {
-    tags: ['Tech_InfiniBand', 'Tech_Custom']
+  'osfp-1.6t': {
+    tags: ['FormFactor_OSFP', 'Speed_1.6T']
   },
 
-  // ===== ETHERNET =====
-  'ethernet-800g': {
-    tags: ['Speed_800G'],
-    excludeTags: ['Tech_DAC', 'Tech_AOC']
+  // ===== FIBER CHANNEL =====
+  'fc-8g': {
+    tags: ['Tech_FiberChannel', 'Speed_8G']
   },
-  'ethernet-400g': {
-    tags: ['Speed_400G'],
-    excludeTags: ['Tech_DAC', 'Tech_AOC']
+  'fc-16g': {
+    tags: ['Tech_FiberChannel', 'Speed_16G']
   },
-  'ethernet-200g': {
-    tags: ['Speed_200G'],
-    excludeTags: ['Tech_DAC', 'Tech_AOC']
+  'fc-32g': {
+    tags: ['Tech_FiberChannel', 'Speed_32G']
   },
-  'ethernet-dac-aoc': {
-    tags: ['Tech_DAC', 'Tech_AOC']
+  'fc-64g': {
+    tags: ['Tech_FiberChannel', 'Speed_64G']
   },
-  'ethernet-custom': {
-    tags: ['Tech_Custom']
+  'fc-128g': {
+    tags: ['Tech_FiberChannel', 'Speed_128G']
   },
 
-  // ===== 10/25/40/100G MODULES =====
-  'modules-100g': {
-    tags: ['Speed_100G'],
-    excludeTags: ['Tech_DWDM', 'Tech_CWDM', 'Tech_DAC', 'Tech_AOC', 'FormFactor_CFP', 'FormFactor_CFP2', 'FormFactor_CFP4']
+  // ===== DAC / AOC CABLES =====
+  'dac-sfp-10g': {
+    tags: ['FormFactor_SFP+', 'Speed_10G', 'Tech_DAC']
   },
-  'modules-50g': {
-    tags: ['Speed_50G'],
-    excludeTags: ['Tech_DWDM', 'Tech_CWDM', 'Tech_DAC', 'Tech_AOC']
+  'dac-sfp28-25g': {
+    tags: ['FormFactor_SFP28', 'Speed_25G', 'Tech_DAC']
   },
-  'modules-40g': {
-    tags: ['Speed_40G'],
-    excludeTags: ['Tech_DWDM', 'Tech_CWDM', 'Tech_DAC', 'Tech_AOC']
+  'dac-qsfp-40g': {
+    tags: ['FormFactor_QSFP+', 'Speed_40G', 'Tech_DAC']
   },
-  'modules-25g': {
-    tags: ['Speed_25G'],
-    excludeTags: ['Tech_DWDM', 'Tech_CWDM', 'Tech_DAC', 'Tech_AOC']
+  'dac-qsfp28-100g': {
+    tags: ['FormFactor_QSFP28', 'Speed_100G', 'Tech_DAC']
   },
-  'modules-100g-cfp': {
-    tags: ['FormFactor_CFP', 'FormFactor_CFP2', 'FormFactor_CFP4'],
-    excludeTags: ['Tech_DWDM'] // On garde les CFP CWDM/DWDM si besoin, ou on les exclut ?
+  'dac-qsfp-dd-400g': {
+    tags: ['FormFactor_QSFP-DD', 'Speed_400G', 'Tech_DAC']
   },
-
-
-  // ===== 1/2.5G MODULES =====
-  'modules-2.5g': {
-    tags: ['Speed_2.5G'],
-    excludeTags: ['Tech_DWDM', 'Tech_CWDM', 'Tech_DAC', 'Tech_AOC']
+  'dac-qsfp-dd-800g': {
+    tags: ['FormFactor_QSFP-DD', 'Speed_800G', 'Tech_DAC']
   },
-  'modules-1g': {
-    tags: ['Speed_1G'],
-    excludeTags: ['Tech_DWDM', 'Tech_CWDM', 'Tech_DAC', 'Tech_AOC']
+  'aoc-sfp-10g': {
+    tags: ['FormFactor_SFP+', 'Speed_10G', 'Tech_AOC']
   },
-  'modules-100m': {
-    tags: ['Speed_100M'],
-    excludeTags: ['Tech_DWDM', 'Tech_CWDM']
+  'aoc-qsfp28-100g': {
+    tags: ['FormFactor_QSFP28', 'Speed_100G', 'Tech_AOC']
   },
-  'modules-low-custom': {
-    tags: ['Tech_Custom']
+  'aoc-qsfp-dd-400g': {
+    tags: ['FormFactor_QSFP-DD', 'Speed_400G', 'Tech_AOC']
   },
 
-  // ===== CÂBLES DAC/AOC/ACC/AEC =====
-  'cables-800g-1.6t': {
-    tagGroups: [['Speed_800G', 'Speed_1.6T'], ['Tech_DAC', 'Tech_AOC', 'Tech_ACC', 'Tech_AEC']]
+  // ===== DWDM / CWDM =====
+  'cwdm-sfp-1g': {
+    tags: ['FormFactor_SFP', 'Speed_1G', 'Tech_CWDM']
   },
-  'cables-400g': {
-    tagGroups: [['Speed_400G'], ['Tech_DAC', 'Tech_AOC', 'Tech_ACC', 'Tech_AEC']]
+  'cwdm-sfp-10g': {
+    tags: ['FormFactor_SFP+', 'Speed_10G', 'Tech_CWDM']
   },
-  'cables-200g': {
-    tagGroups: [['Speed_200G'], ['Tech_DAC', 'Tech_AOC', 'Tech_ACC', 'Tech_AEC']]
+  'cwdm-sfp28-25g': {
+    tags: ['FormFactor_SFP28', 'Speed_25G', 'Tech_CWDM']
   },
-  'cables-100g': {
-    tagGroups: [['Speed_100G'], ['Tech_DAC', 'Tech_AOC', 'Tech_ACC', 'Tech_AEC']]
+  'dwdm-sfp-1g': {
+    tags: ['FormFactor_SFP', 'Speed_1G', 'Tech_DWDM']
   },
-  'cables-50g': {
-    tagGroups: [['Speed_50G', 'Speed_56G'], ['Tech_DAC', 'Tech_AOC', 'Tech_ACC', 'Tech_AEC']]
+  'dwdm-sfp-10g': {
+    tags: ['FormFactor_SFP+', 'Speed_10G', 'Tech_DWDM']
+  },
+  'dwdm-sfp28-25g': {
+    tags: ['FormFactor_SFP28', 'Speed_25G', 'Tech_DWDM']
+  },
+  'dwdm-qsfp28-100g': {
+    tags: ['FormFactor_QSFP28', 'Speed_100G', 'Tech_DWDM']
   },
 
-
-  // ===== TRANSMISSION OPTIQUE =====
-  'optical-cfp2': {
-    tags: ['FormFactor_CFP2', 'Tech_Coherent']
+  // ===== INFINIBAND / HPC =====
+  'ib-qsfp-40g': {
+    tags: ['FormFactor_QSFP+', 'Speed_40G', 'Tech_InfiniBand']
   },
-  'optical-25g-cwdm': {
-    tags: ['Speed_25G', 'Tech_CWDM', 'Tech_DWDM']
+  'ib-qsfp28-100g': {
+    tags: ['FormFactor_QSFP28', 'Speed_100G', 'Tech_InfiniBand']
   },
-  'optical-10g-cwdm': {
-    tags: ['Speed_10G', 'Tech_CWDM', 'Tech_DWDM']
+  'ib-qsfp56-200g': {
+    tags: ['FormFactor_QSFP56', 'Speed_200G', 'Tech_InfiniBand']
   },
-  'optical-2.5g-cwdm': {
-    tags: ['Speed_2.5G', 'Tech_CWDM', 'Tech_DWDM']
+  'ib-qsfp112-400g': {
+    tags: ['FormFactor_QSFP112', 'Speed_400G', 'Tech_InfiniBand']
   },
-  'optical-1g-cwdm': {
-    tags: ['Speed_1G', 'Tech_CWDM', 'Tech_DWDM']
+  'ib-osfp-800g': {
+    tags: ['FormFactor_OSFP', 'Speed_800G', 'Tech_InfiniBand']
   },
-  'optical-100g-dwdm': {
-    tags: ['Speed_100G', 'Tech_DWDM']
-  }
+  'ib-osfp-1.6t': {
+    tags: ['FormFactor_OSFP', 'Speed_1.6T', 'Tech_InfiniBand']
+  },
 };
 
 /**
@@ -287,7 +413,7 @@ export const CATEGORY_MAPPINGS: Record<string, CategoryMapping> = {
 export const SEGMENT_MAPPINGS: Record<string, CategoryMapping> = {
   'modules-ethernet': {
     excludeTags: [
-      'Tech_DAC', 'Tech_AOC', 'Tech_DWDM', 'Tech_CWDM', 'Tech_Tunable', 'Tech_Coherent', 'Tech_InfiniBand',
+      'Tech_DAC', 'Tech_AOC', 'Tech_DWDM', 'Tech_CWDM', 'Tech_Tunable', 'Tech_Coherent', 'Tech_InfiniBand', 'Tech_FiberChannel',
       'FormFactor_CFP', 'FormFactor_CFP2', 'FormFactor_CFP4'
     ]
   },
@@ -300,6 +426,9 @@ export const SEGMENT_MAPPINGS: Record<string, CategoryMapping> = {
   },
   'infiniband-hpc': {
     tags: ['Tech_InfiniBand']
+  },
+  'fiber-channel': {
+    tags: ['Tech_FiberChannel']
   }
 };
 
@@ -351,4 +480,3 @@ export function getCategoryShopifyQuery(categoryId: string): string {
   const mapping = CATEGORY_MAPPINGS[categoryId];
   return mapping ? getMappingShopifyQuery(mapping) : '';
 }
-

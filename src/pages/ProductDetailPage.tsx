@@ -5,6 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { SEOHead } from '@/components/SEOHead';
 import { Header } from '@/components/Header';
 import Footer from '@/components/Footer';
+import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,7 +27,7 @@ import { DynamicProductImage } from '@/components/DynamicProductImage';
 import { siteConfig } from '@/config/site';
 
 // Helper pour la date de livraison estimée
-const getDeliveryDate = () => {
+const getDeliveryDate = (language: string) => {
   const today = new Date();
   const hour = today.getHours();
   // Si commande avant 14h, expédition le jour même, livraison J+2 (48h)
@@ -46,13 +47,14 @@ const getDeliveryDate = () => {
     deliveryDate.setDate(deliveryDate.getDate() + 2);
   }
 
-  return deliveryDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  return deliveryDate.toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long' });
 };
 
 type Product = UnifiedProduct;
 
 export default function ProductDetailPage() {
   const { handle } = useParams<{ handle: string }>();
+  const { t, language } = useLanguage();
   const [selectedImage, setSelectedImage] = useState(0);
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
@@ -87,7 +89,9 @@ export default function ProductDetailPage() {
         const metaDescription = document.querySelector('meta[name="description"]');
         if (metaDescription) {
           metaDescription.setAttribute('content',
-            `${unifiedProduct.description}. Compatible multi-constructeurs, stock européen.`
+            language === 'fr'
+              ? `${unifiedProduct.description}. Compatible multi-constructeurs, stock français.`
+              : `${unifiedProduct.description}. Multi-vendor compatible, French stock.`
           );
         }
 
@@ -117,7 +121,7 @@ export default function ProductDetailPage() {
           const metaDescription = document.querySelector('meta[name="description"]');
           if (metaDescription) {
             metaDescription.setAttribute('content',
-              `${foundProduct.description}. Compatible multi-constructeurs, stock européen.`
+              `${foundProduct.description}. Compatible multi-constructeurs, stock français.`
             );
           }
         }
@@ -199,12 +203,12 @@ export default function ProductDetailPage() {
         <main className="pt-16 min-h-screen flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-heading font-bold text-foreground mb-4">
-              Produit non trouvé
+              {language === 'fr' ? 'Produit non trouvé' : 'Product not found'}
             </h1>
             <Button asChild>
               <Link to="/produits">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Retour aux produits
+                {language === 'fr' ? 'Retour aux produits' : 'Back to products'}
               </Link>
             </Button>
           </div>
@@ -268,8 +272,8 @@ export default function ProductDetailPage() {
     const variantId = resolveVariantId();
     if (!variantId) {
       toast({
-        title: "Erreur",
-        description: "Impossible de trouver le variant produit",
+        title: language === 'fr' ? 'Erreur' : 'Error',
+        description: t('shopify.variantNotFound'),
         variant: "destructive"
       });
       return;
@@ -292,14 +296,14 @@ export default function ProductDetailPage() {
 
       trackAddToCart(product.id, product.title, product.price);
       toast({
-        title: "Ajouté au panier",
-        description: `${product.title} a été ajouté à votre panier.`
+        title: t('shopify.addedToCart'),
+        description: t('shopify.addedToCartDesc').replace('{{title}}', product.title)
       });
     } catch (error) {
       console.error('Erreur ajout panier:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible d'ajouter le produit au panier",
+        title: language === 'fr' ? 'Erreur' : 'Error',
+        description: t('shopify.addToCartError'),
         variant: "destructive"
       });
     }
@@ -350,7 +354,10 @@ export default function ProductDetailPage() {
     <>
       <SEOHead
         title={`${product.title} - Vaonix`}
-        description={`${product.description}. Compatible multi-constructeurs, stock européen.`}
+        description={language === 'fr'
+          ? `${product.description}. Compatible multi-constructeurs, stock français.`
+          : `${product.description}. Multi-vendor compatible, French stock.`
+        }
         url={`https://vaonix-shop.fr/produit/${product.handle}`}
         structuredData={structuredData}
       />
@@ -363,9 +370,9 @@ export default function ProductDetailPage() {
           <section className="py-4 border-b border-border">
             <div className="container mx-auto px-4">
               <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
-                <Link to="/" className="hover:text-foreground transition-colors">Accueil</Link>
+                <Link to="/" className="hover:text-foreground transition-colors">{t('nav.home')}</Link>
                 <span>/</span>
-                <Link to="/produits" className="hover:text-foreground transition-colors">Produits</Link>
+                <Link to="/produits" className="hover:text-foreground transition-colors">{t('nav.products')}</Link>
                 <span>/</span>
                 <span className="text-foreground">{product.title}</span>
               </nav>
@@ -414,30 +421,17 @@ export default function ProductDetailPage() {
                     <Badge className="mb-3">{product.platform}</Badge>
                     <h1 className="text-3xl lg:text-4xl font-heading font-bold mb-2">{product.title}</h1>
                     <p className="text-muted-foreground text-lg">
-                      Référence: <span className="font-mono font-semibold">{product.pn}</span>
+                      {t('products.referenceLabel')} <span className="font-mono font-semibold">{product.pn}</span>
                     </p>
                   </div>
 
                   <div className="flex items-center gap-4 pb-6 border-b">
                     <div className="text-3xl font-bold text-primary">
-                      {formatPrice(product.price)}€ <span className="text-lg text-muted-foreground">HT</span>
+                      {formatPrice(product.price)}€ <span className="text-lg text-muted-foreground">{t('common.exclTax')}</span>
                       <span className="text-sm text-muted-foreground ml-2 font-normal">
-                        ({formatPrice(product.price * 1.2)}€ TTC)
+                        ({formatPrice(product.price * 1.2)}€ {t('common.inclTax')})
                       </span>
                     </div>
-                    {product.stock_status === 'in_stock' ? (
-                      <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700 px-3 py-1">
-                        <span className="relative flex h-2 w-2 mr-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                        </span>
-                        En stock (Expédition immédiate)
-                      </Badge>
-                    ) : (
-                      <Badge variant="secondary">
-                        Sur commande
-                      </Badge>
-                    )}
                   </div>
 
 
@@ -445,11 +439,11 @@ export default function ProductDetailPage() {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium mb-2">
-                        Compatibilité constructeur
+                        {t('products.compatibilityOptions')}
                       </label>
                       <Select value={selectedCompatibility} onValueChange={setSelectedCompatibility}>
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Sélectionner un constructeur" />
+                          <SelectValue placeholder={t('products.selectVendor')} />
                         </SelectTrigger>
                         <SelectContent>
                           {COMPATIBILITY_OPTIONS.map(option => (
@@ -465,14 +459,14 @@ export default function ProductDetailPage() {
                     {isCable && (
                       <div>
                         <label className="block text-sm font-medium mb-2">
-                          Longueur du câble
+                          {t('products.cableLength')}
                         </label>
                         <Select
                           value={selectedCableLength?.toString() || ''}
                           onValueChange={(val) => setSelectedCableLength(parseInt(val))}
                         >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Sélectionner une longueur" />
+                            <SelectValue placeholder={t('products.selectLength')} />
                           </SelectTrigger>
                           <SelectContent>
                             {CABLE_LENGTHS.map(length => (
@@ -490,14 +484,14 @@ export default function ProductDetailPage() {
                   {isDWDM && (
                     <div className="space-y-4">
                       <span className="text-sm font-semibold text-foreground/70 block uppercase tracking-wider">
-                        Canal DWDM (100GHz ITU)
+                        {t('products.dwdmChannel')}
                       </span>
                       <Select
                         value={selectedDWDMChannel}
                         onValueChange={setSelectedDWDMChannel}
                       >
                         <SelectTrigger className="w-full h-12 bg-white border-2 hover:border-primary/50 transition-colors">
-                          <SelectValue placeholder="Sélectionner un canal" />
+                          <SelectValue placeholder={language === 'fr' ? 'Sélectionner un canal' : 'Select a channel'} />
                         </SelectTrigger>
                         <SelectContent className="bg-white border-2 shadow-xl max-h-[300px]">
                           {DWDM_CHANNELS.map((ch) => (
@@ -517,14 +511,14 @@ export default function ProductDetailPage() {
                   {isCWDM && (
                     <div className="space-y-4">
                       <span className="text-sm font-semibold text-foreground/70 block uppercase tracking-wider">
-                        Longueur d'onde CWDM
+                        {t('products.cwdmChannel')}
                       </span>
                       <Select
                         value={selectedCWDMChannel}
                         onValueChange={setSelectedCWDMChannel}
                       >
                         <SelectTrigger className="w-full h-12 bg-white border-2 hover:border-primary/50 transition-colors">
-                          <SelectValue placeholder="Choisir la longueur d'onde" />
+                          <SelectValue placeholder={language === 'fr' ? 'Choisir la longueur d"onde' : 'Choose wavelength'} />
                         </SelectTrigger>
                         <SelectContent className="bg-white border-2 shadow-xl max-h-[300px]">
                           {CWDM_WAVELENGTHS.map(wave => (
@@ -540,26 +534,26 @@ export default function ProductDetailPage() {
                   {/* Temperature Range Selection */}
                   <div className="space-y-4">
                     <span className="text-sm font-semibold text-foreground/70 block uppercase tracking-wider">
-                      Plage de température
+                      {t('products.temperature.title')}
                     </span>
                     <Select
                       value={selectedTemperature}
                       onValueChange={setSelectedTemperature}
                     >
                       <SelectTrigger className="w-full h-12 bg-white border-2 hover:border-primary/50 transition-colors">
-                        <SelectValue placeholder="Sélectionner la plage" />
+                        <SelectValue placeholder={t('products.temperature.placeholder')} />
                       </SelectTrigger>
                       <SelectContent className="bg-white border-2 shadow-xl">
                         <SelectItem value="standard" className="py-3">
                           <div className="flex flex-col">
-                            <span>Standard (0°C à +70°C)</span>
-                            <span className="text-xs text-muted-foreground">Usage standard</span>
+                            <span>{t('products.temperature.standard')}</span>
+                            <span className="text-xs text-muted-foreground">{t('products.temperature.standardDesc')}</span>
                           </div>
                         </SelectItem>
                         <SelectItem value="industrial" className="py-3">
                           <div className="flex flex-col">
-                            <span>Industriel (-40°C à +85°C)</span>
-                            <span className="text-xs text-muted-foreground">Environnements extrêmes</span>
+                            <span>{t('products.temperature.industrial')}</span>
+                            <span className="text-xs text-muted-foreground">{t('products.temperature.industrialDesc')}</span>
                           </div>
                         </SelectItem>
                       </SelectContent>
@@ -585,7 +579,7 @@ export default function ProductDetailPage() {
                         }
                       >
                         <ShoppingCart className="mr-2 h-5 w-5" />
-                        Ajouter au panier
+                        {t('products.addToCart')}
                       </Button>
                     )}
 
@@ -593,18 +587,20 @@ export default function ProductDetailPage() {
                       <div className="grid grid-cols-3 gap-4">
                         <div className="flex flex-col items-center text-center p-3 rounded-lg bg-secondary/10 border border-border/50">
                           <Shield className="h-6 w-6 mb-2 text-primary" />
-                          <span className="text-xs font-semibold">Garantie 2 Ans</span>
-                          <span className="text-[10px] text-muted-foreground">Échange standard</span>
+                          <span className="text-xs font-semibold">{t('common.warranty2Years')}</span>
+                          <span className="text-[10px] text-muted-foreground">{t('products.delivery.standardExchange')}</span>
                         </div>
                         <div className="flex flex-col items-center text-center p-3 rounded-lg bg-secondary/10 border border-border/50">
-                          <Truck className="h-6 w-6 mb-2 text-primary" />
-                          <span className="text-xs font-semibold">Livraison 48h</span>
-                          <span className="text-[10px] text-muted-foreground">Stock France</span>
+                          <Clock className="h-6 w-6 mb-2 text-primary" />
+                          <div className="flex flex-col">
+                            <span className="text-xs font-semibold">{t('products.delivery.shippingPrefix')}</span>
+                            <span className="text-xs font-bold text-primary">{getDeliveryDate(language)}</span>
+                          </div>
                         </div>
                         <div className="flex flex-col items-center text-center p-3 rounded-lg bg-secondary/10 border border-border/50">
                           <Award className="h-6 w-6 mb-2 text-primary" />
-                          <span className="text-xs font-semibold">Support Expert</span>
-                          <span className="text-[10px] text-muted-foreground">Basé à Paris</span>
+                          <span className="text-xs font-semibold">{t('products.delivery.expertSupport')}</span>
+                          <span className="text-[10px] text-muted-foreground">{t('products.delivery.basedInParis')}</span>
                         </div>
                       </div>
 
@@ -615,8 +611,8 @@ export default function ProductDetailPage() {
                             <Phone className="h-5 w-5 text-primary" />
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-foreground">Besoin d'aide ?</p>
-                            <p className="text-xs text-muted-foreground">Nos experts vous répondent</p>
+                            <p className="text-sm font-semibold text-foreground">{t('products.needHelp')}</p>
+                            <p className="text-xs text-muted-foreground">{t('products.expertsResponse')}</p>
                           </div>
                         </div>
                         <Button variant="outline" size="sm" className="bg-white" asChild>
@@ -630,98 +626,72 @@ export default function ProductDetailPage() {
             </div>
           </section>
 
-          {/* Tabs: Description & Specs */}
+          {/* Specs Section */}
           <section className="mt-16 bg-muted/20 py-16">
             <div className="container mx-auto px-4">
-              <Tabs defaultValue="specs">
-                <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent gap-8">
-                  <TabsTrigger
-                    value="specs"
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent px-0 py-4 font-semibold transition-all"
-                  >
-                    Spécifications Techniques
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="description"
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent px-0 py-4 font-semibold transition-all"
-                  >
-                    Description Détaillée
-                  </TabsTrigger>
-                </TabsList>
+              <div className="space-y-8">
+                <h2 className="text-2xl font-bold border-b-2 border-primary w-fit pb-2">{t('products.techSpecs')}</h2>
 
-                <TabsContent value="specs" className="mt-8">
-                  <Card className="border-none shadow-sm">
-                    <CardHeader>
-                      <CardTitle className="text-xl">Caractéristiques Techniques</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <Table>
-                        <TableBody>
-                          {specs?.formFactor && (
-                            <TableRow>
-                              <TableCell className="font-medium w-1/3 bg-muted/30">Format (Form Factor)</TableCell>
-                              <TableCell>{specs.formFactor}</TableCell>
-                            </TableRow>
-                          )}
-                          {specs?.speed && (
-                            <TableRow>
-                              <TableCell className="font-medium bg-muted/30">Débit</TableCell>
-                              <TableCell>{specs.speed}</TableCell>
-                            </TableRow>
-                          )}
-                          {specs?.distance && (
-                            <TableRow>
-                              <TableCell className="font-medium bg-muted/30">Distance</TableCell>
-                              <TableCell>{specs.distance}</TableCell>
-                            </TableRow>
-                          )}
-                          {specs?.technology && specs.technology.length > 0 && (
-                            <TableRow>
-                              <TableCell className="font-medium bg-muted/30">Technologie</TableCell>
-                              <TableCell>{specs.technology.join(', ')}</TableCell>
-                            </TableRow>
-                          )}
-                          {specs?.media && (
-                            <TableRow>
-                              <TableCell className="font-medium bg-muted/30">Média / Fibre</TableCell>
-                              <TableCell>{specs.media}</TableCell>
-                            </TableRow>
-                          )}
-                          {product.wavelength && (
-                            <TableRow>
-                              <TableCell className="font-medium bg-muted/30">Longueur d'onde</TableCell>
-                              <TableCell>{product.wavelength}</TableCell>
-                            </TableRow>
-                          )}
+                <Card className="border-none shadow-sm">
+                  <CardHeader>
+                    <CardTitle className="text-xl">{t('products.techSpecsTitle')}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableBody>
+                        {specs?.formFactor && (
                           <TableRow>
-                            <TableCell className="font-medium bg-muted/30">Compatibilité</TableCell>
-                            <TableCell>Multi-Constructeurs (Cisco, Arista, Juniper, Dell, etc.)</TableCell>
+                            <TableCell className="font-medium w-1/3 bg-muted/30">{language === 'fr' ? 'Format (Form Factor)' : 'Form Factor'}</TableCell>
+                            <TableCell>{specs.formFactor}</TableCell>
                           </TableRow>
+                        )}
+                        {specs?.speed && (
                           <TableRow>
-                            <TableCell className="font-medium bg-muted/30">Température</TableCell>
-                            <TableCell>Commerciale (0°C à 70°C)</TableCell>
+                            <TableCell className="font-medium bg-muted/30">{t('products.specs.speed')}</TableCell>
+                            <TableCell>{specs.speed}</TableCell>
                           </TableRow>
+                        )}
+                        {specs?.distance && (
                           <TableRow>
-                            <TableCell className="font-medium bg-muted/30">Garantie</TableCell>
-                            <TableCell>3 Ans (Échange standard)</TableCell>
+                            <TableCell className="font-medium bg-muted/30">{t('products.specs.range')}</TableCell>
+                            <TableCell>{specs.distance}</TableCell>
                           </TableRow>
-                        </TableBody>
-                      </Table>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                <TabsContent value="description" className="mt-8">
-                  <Card className="border-none shadow-sm">
-                    <CardContent className="pt-8">
-                      <div
-                        className="prose prose-slate max-w-none text-muted-foreground"
-                        dangerouslySetInnerHTML={{ __html: product.description }}
-                      />
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              </Tabs>
+                        )}
+                        {specs?.technology && specs.technology.length > 0 && (
+                          <TableRow>
+                            <TableCell className="font-medium bg-muted/30">{language === 'fr' ? 'Technologie' : 'Technology'}</TableCell>
+                            <TableCell>{specs.technology.join(', ')}</TableCell>
+                          </TableRow>
+                        )}
+                        {specs?.media && (
+                          <TableRow>
+                            <TableCell className="font-medium bg-muted/30">{t('products.specs.media')}</TableCell>
+                            <TableCell>{specs.media}</TableCell>
+                          </TableRow>
+                        )}
+                        {product.wavelength && (
+                          <TableRow>
+                            <TableCell className="font-medium bg-muted/30">{language === 'fr' ? "Longueur d'onde" : 'Wavelength'}</TableCell>
+                            <TableCell>{product.wavelength}</TableCell>
+                          </TableRow>
+                        )}
+                        <TableRow>
+                          <TableCell className="font-medium bg-muted/30">{language === 'fr' ? 'Compatibilité' : 'Compatibility'}</TableCell>
+                          <TableCell>{language === 'fr' ? 'Multi-Constructeurs (Cisco, Arista, Juniper, Dell, etc.)' : 'Multi-Vendor (Cisco, Arista, Juniper, Dell, etc.)'}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell className="font-medium bg-muted/30">{t('products.temperature.title')}</TableCell>
+                          <TableCell>{language === 'fr' ? 'Commerciale (0°C à 70°C)' : 'Commercial (0°C to 70°C)'}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell className="font-medium bg-muted/30">{language === 'fr' ? 'Garantie' : 'Warranty'}</TableCell>
+                          <TableCell>{language === 'fr' ? '5 Ans (Échange standard)' : '5 Years (Standard exchange)'}</TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </section>
 
@@ -730,10 +700,10 @@ export default function ProductDetailPage() {
             <section className="py-16 bg-white">
               <div className="container mx-auto px-4">
                 <div className="flex items-center justify-between mb-8">
-                  <h2 className="text-2xl font-bold">Produits Similaires</h2>
+                  <h2 className="text-2xl font-bold">{t('products.relatedProducts')}</h2>
                   <Button variant="ghost" className="text-primary gap-2" asChild>
                     <Link to="/produits/liste">
-                      Voir toute la gamme <ArrowLeft className="w-4 h-4 rotate-180" />
+                      {t('products.viewFullRange')} <ArrowLeft className="w-4 h-4 rotate-180" />
                     </Link>
                   </Button>
                 </div>
@@ -742,12 +712,15 @@ export default function ProductDetailPage() {
                     <Card key={related.id} className="group hover:shadow-xl transition-all duration-300 border-none bg-muted/10">
                       <CardContent className="p-4">
                         <div className="aspect-square rounded-lg overflow-hidden bg-white mb-4 relative shadow-sm">
-                          <img
-                            src={related.images[0]}
-                            alt={related.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          <DynamicProductImage
+                            product={{
+                              title: related.title,
+                              handle: related.handle,
+                              specs: parseProductSpecs(related.title)
+                            }}
+                            className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                            showLabel={true}
                           />
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
                         </div>
                         <div className="space-y-3">
                           <p className="text-[10px] font-mono font-bold text-primary tracking-widest uppercase">{related.pn}</p>
@@ -759,7 +732,7 @@ export default function ProductDetailPage() {
                           <div className="flex items-center justify-between pt-2 border-t">
                             <span className="font-bold text-lg text-primary">{formatPrice(related.price)}€</span>
                             <Button size="sm" variant="outline" className="h-8 px-3 rounded-full hover:bg-primary hover:text-white transition-colors" asChild>
-                              <Link to={`/produit/${related.handle}`}>Voir</Link>
+                              <Link to={`/produit/${related.handle}`}>{language === 'fr' ? 'Voir' : 'View'}</Link>
                             </Button>
                           </div>
                         </div>

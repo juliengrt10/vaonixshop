@@ -27,11 +27,12 @@ const Index = () => {
   return (
     <main className="overflow-hidden">
       <SEOHead
-        title="Vaonix — Modules SFP, SFP+, QSFP, QSFP-DD | Compatibilité multi-constructeurs"
-        description="Modules optiques de confiance : SFP, SFP+, QSFP, QSFP-DD. Performance, compatibilité multi-constructeurs, stock européen et support technique expert."
+        title="Vaonix — Modules SFP, SFP+, QSFP, QSFP-DD, OSFP | Compatibilité multi-constructeurs"
+        description="Modules optiques de confiance : SFP, SFP+, QSFP, QSFP-DD, OSFP. Performance, compatibilité multi-constructeurs, stock français et support technique expert."
         url="https://vaonix-shop.fr"
         structuredData={structuredData}
       />
+
       <HeroSection />
       <WhyVaonixSection />
       <ProductsSection />

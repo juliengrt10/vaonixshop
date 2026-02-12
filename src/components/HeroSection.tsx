@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react"; // Corrigé ici
 import { useNavigate } from "react-router-dom";
 import heroModules from "@/assets/hero-modules.jpg";
 
@@ -29,7 +29,11 @@ const HeroSection = () => {
 
           {/* Main title */}
           <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-            <img src="/images/vaonix-logo.png" alt="Vaonix" className="h-[1em] w-auto inline-block align-middle mr-2 -mt-2" /> — Modules
+            <img
+              src="/images/vaonix-logo-transparent.png"
+              alt="Vaonix"
+              className="h-[1.4em] w-auto inline-block align-middle mr-3 -mt-3"
+            /> — Modules
             <br className="hidden md:block" />
             SFP, SFP+, QSFP, QSFP-DD
           </h1>

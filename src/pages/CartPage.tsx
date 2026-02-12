@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { useLanguage } from '@/context/LanguageContext';
 import {
   ShoppingCart,
   Plus,
@@ -19,6 +20,7 @@ import {
   CreditCard,
   Lock,
   ShieldCheck,
+  Clock,
 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { formatPrice } from '@/lib/utils';
@@ -28,6 +30,7 @@ import { mapMockToUnified } from '@/lib/productMapper';
 
 export default function CartPage() {
   const navigate = useNavigate();
+  const { t, language } = useLanguage();
   const {
     cart,
     loading,
@@ -57,7 +60,7 @@ export default function CartPage() {
     return (
       <>
         <Helmet>
-          <title>Panier non disponible | Vaonix Shop</title>
+          <title>{t('cart.notAvailable') + ' | Vaonix Shop'}</title>
         </Helmet>
         <div className="flex min-h-screen flex-col bg-background">
           <Header />
@@ -65,9 +68,9 @@ export default function CartPage() {
             <div className="container max-w-4xl mx-auto py-16">
               <div className="text-center">
                 <ShoppingCart className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                <h1 className="text-2xl font-bold mb-2">Panier non disponible</h1>
+                <h1 className="text-2xl font-bold mb-2">{t('cart.notAvailable')}</h1>
                 <p className="text-muted-foreground">
-                  La fonctionnalité panier n&apos;est pas activée sur cette boutique.
+                  {t('cart.notAvailableDesc')}
                 </p>
               </div>
             </div>
@@ -82,7 +85,7 @@ export default function CartPage() {
     <>
       <Helmet>
         <title>
-          Panier ({totalItems} article{totalItems > 1 ? 's' : ''}) | Vaonix Shop
+          {t('cart.title') + ` (${totalItems}) | Vaonix Shop`}
         </title>
       </Helmet>
 
@@ -98,7 +101,7 @@ export default function CartPage() {
               className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="w-4 h-4 mr-1" />
-              Retour
+              {t('cart.back')}
             </button>
 
             {/* Titre + résumé */}
@@ -106,11 +109,11 @@ export default function CartPage() {
               <div className="flex items-center gap-3">
                 <ShoppingCart className="w-7 h-7" />
                 <div>
-                  <h1 className="text-2xl font-bold">Votre panier</h1>
+                  <h1 className="text-2xl font-bold">{t('cart.title')}</h1>
                   <p className="text-sm text-muted-foreground">
                     {totalItems > 0
-                      ? `${totalItems} article${totalItems > 1 ? 's' : ''} dans votre panier`
-                      : 'Aucun article pour le moment'}
+                      ? t('cart.itemsCount').replace('{{count}}', totalItems.toString())
+                      : t('cart.noItems')}
                   </p>
                 </div>
               </div>
@@ -118,7 +121,7 @@ export default function CartPage() {
               {totalItems > 0 && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Package className="w-4 h-4" />
-                  <span>Modules disponibles et livrables rapidement</span>
+                  <span>{t('cart.fastShipping')}</span>
                 </div>
               )}
             </div>
@@ -127,18 +130,18 @@ export default function CartPage() {
               <div className="mt-10 flex flex-col items-center justify-center text-center text-muted-foreground">
                 <ShoppingCart className="w-12 h-12 mb-4" />
                 <p className="mb-2 text-lg font-semibold">
-                  Votre panier est actuellement vide.
+                  {t('cart.empty')}
                 </p>
                 <p className="mb-4 text-sm">
-                  Parcourez nos modules optiques pour commencer votre sélection.
+                  {t('cart.emptySubtitle')}
                 </p>
                 <Button asChild className="mb-12">
-                  <Link to="/">Découvrir les produits</Link>
+                  <Link to="/">{t('cart.discover')}</Link>
                 </Button>
 
                 {/* Popular Products Cross-sell */}
                 <div className="w-full max-w-5xl text-left">
-                  <h3 className="text-xl font-bold mb-6 text-foreground">Nos Meilleures Ventes</h3>
+                  <h3 className="text-xl font-bold mb-6 text-foreground">{t('cart.bestsellers')}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {productsData.products.slice(0, 4).map(mapMockToUnified).map((product) => (
                       <Card key={product.id} className="group hover:shadow-lg transition-shadow">
@@ -160,7 +163,7 @@ export default function CartPage() {
                             <div className="flex items-center justify-between pt-2">
                               <span className="font-bold text-primary">{formatPrice(product.price)}€</span>
                               <Button size="sm" variant="outline" asChild>
-                                <Link to={`/produit/${product.handle}`}>Voir</Link>
+                                <Link to={`/produit/${product.handle}`}>{t('cart.view')}</Link>
                               </Button>
                             </div>
                           </div>
@@ -193,10 +196,10 @@ export default function CartPage() {
                     <CardContent className="p-6 space-y-4">
                       <div className="flex items-center justify-between">
                         <h2 className="text-lg font-semibold">
-                          Récapitulatif de la commande
+                          {t('cart.summary.title')}
                         </h2>
                         <Badge variant="outline">
-                          {totalItems} article{totalItems > 1 ? 's' : ''}
+                          {totalItems} {totalItems > 1 ? (language === 'fr' ? 'articles' : 'items') : (language === 'fr' ? 'article' : 'item')}
                         </Badge>
                       </div>
 
@@ -205,7 +208,7 @@ export default function CartPage() {
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">
-                            Sous-total
+                            {t('cart.summary.subtotal')}
                           </span>
                           <span className="font-medium">
                             {formatPrice(subtotal)} €
@@ -215,11 +218,11 @@ export default function CartPage() {
                         <div className="flex justify-between">
                           <span className="flex items-center gap-2 text-muted-foreground">
                             <Truck className="w-4 h-4" />
-                            Livraison estimée
+                            {t('cart.summary.shipping')}
                           </span>
                           <span className="font-medium">
                             {shippingCost === 0
-                              ? 'Offerte'
+                              ? t('cart.summary.free')
                               : `${formatPrice(shippingCost)} €`}
                           </span>
                         </div>
@@ -228,11 +231,7 @@ export default function CartPage() {
                       {totalPrice < shippingThreshold && (
                         <div className="rounded-lg bg-muted p-3 text-xs text-muted-foreground space-y-2">
                           <p>
-                            Plus que{' '}
-                            <strong>
-                              {formatPrice(shippingThreshold - totalPrice)} €
-                            </strong>{' '}
-                            pour bénéficier de la livraison gratuite.
+                            {t('cart.summary.freeShippingNotice').replace('{{amount}}', formatPrice(shippingThreshold - totalPrice))}
                           </p>
                           <div className="h-1.5 rounded-full bg-background/60 overflow-hidden">
                             <div
@@ -245,7 +244,7 @@ export default function CartPage() {
                               }}
                             />
                           </div>
-                          <p>Livraison gratuite dès {formatPrice(shippingThreshold)} €</p>
+                          <p>{t('cart.summary.freeShippingThreshold').replace('{{amount}}', formatPrice(shippingThreshold))}</p>
                         </div>
                       )}
 
@@ -258,7 +257,7 @@ export default function CartPage() {
                             {formatPrice(grandTotal)} €
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            TVA et frais définitifs calculés sur Shopify.
+                            {t('cart.summary.disclaimer')}
                           </p>
                         </div>
                       </div>
@@ -268,16 +267,16 @@ export default function CartPage() {
                         disabled={!checkoutUrl || loading}
                         onClick={() => {
                           if (!checkoutUrl) {
-                            setToastMessage('Impossible d\'obtenir l\'URL de paiement.');
+                            setToastMessage(t('cart.notifications.checkoutError'));
                             setToastType('error');
                             return;
                           }
                           window.open(checkoutUrl, '_blank');
-                          setToastMessage('Redirection vers le paiement...');
+                          setToastMessage(t('cart.notifications.redirecting'));
                           setToastType('success');
                         }}
                       >
-                        Valider le panier sur Shopify
+                        {t('cart.checkout')}
                         <ExternalLink className="w-4 h-4 ml-2" />
                       </Button>
 
@@ -286,7 +285,7 @@ export default function CartPage() {
                         className="w-full"
                         asChild
                       >
-                        <Link to="/">Continuer vos achats</Link>
+                        <Link to="/">{t('cart.continueShopping')}</Link>
                       </Button>
                     </CardContent>
                   </Card>
@@ -298,7 +297,7 @@ export default function CartPage() {
                     <CardContent className="p-4 space-y-4">
                       <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
                         <ShieldCheck className="w-4 h-4 text-green-600" />
-                        Paiement 100% Sécurisé
+                        {t('cart.securePayment')}
                       </div>
                       <div className="flex gap-2 flex-wrap">
                         <div className="bg-white border rounded px-2 py-1 h-8 flex items-center justify-center">
@@ -316,7 +315,7 @@ export default function CartPage() {
                       </div>
                       <p className="text-xs text-muted-foreground flex items-center gap-1">
                         <Lock className="w-3 h-3" />
-                        Vos données sont chiffrées (SSL 256-bit)
+                        {t('cart.dataEncryption')}
                       </p>
                     </CardContent>
                   </Card>
@@ -345,6 +344,7 @@ function CartItemCard({
   onRemove,
   loading,
 }: CartItemCardProps) {
+  const { language } = useLanguage();
   const { merchandise, cost } = item;
   const product = merchandise.product;
 
@@ -382,7 +382,7 @@ function CartItemCard({
               />
             ) : (
               <div className="w-28 h-28 md:w-32 md:h-32 rounded-md bg-muted flex items-center justify-center text-xs text-muted-foreground">
-                Image indisponible
+                {t('cart.item.imageUnavailable')}
               </div>
             )}
           </Link>
@@ -400,13 +400,13 @@ function CartItemCard({
 
                 {merchandise.title && merchandise.title !== 'Default Title' && (
                   <p className="text-xs text-muted-foreground">
-                    Variante : {merchandise.title}
+                    {t('cart.item.variant')} : {merchandise.title}
                   </p>
                 )}
 
                 {product.handle?.toLowerCase().includes('qsfp') && (
                   <Badge variant="outline" className="text-[10px]">
-                    Haute capacité
+                    {t('cart.item.highCapacity')}
                   </Badge>
                 )}
               </div>
@@ -417,7 +417,7 @@ function CartItemCard({
                   {formatPrice(lineTotal)} €
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Prix unitaire : {formatPrice(price)} €
+                  {t('cart.item.unitPrice')} : {formatPrice(price)} €
                 </p>
               </div>
             </div>
@@ -427,7 +427,7 @@ function CartItemCard({
             {/* Quantité + actions */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
               <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">Quantité</span>
+                <span className="text-xs text-muted-foreground">{t('cart.item.quantity')}</span>
                 <div className="inline-flex items-center rounded-md border bg-background">
                   <Button
                     type="button"
@@ -460,7 +460,7 @@ function CartItemCard({
               <div className="flex items-center gap-3 justify-end">
                 <div className="flex items-center gap-1 text-xs text-muted-foreground">
                   <Package className="w-3 h-3" />
-                  <span>Expédition rapide</span>
+                  <span>{t('cart.shippingNotice')}</span>
                 </div>
 
                 <Button
@@ -472,7 +472,7 @@ function CartItemCard({
                   disabled={loading}
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
-                  Retirer
+                  {t('cart.item.remove')}
                 </Button>
               </div>
             </div>

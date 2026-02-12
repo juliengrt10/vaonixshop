@@ -9,8 +9,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import { siteConfig } from '@/config/site';
 import { toast } from '@/hooks/use-toast';
+import { useLanguage } from '@/context/LanguageContext';
 
 const ContactPage = () => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -20,20 +22,20 @@ const ContactPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validation basique
     if (!formData.name || !formData.email || !formData.message) {
       toast({
-        title: "Champs requis manquants",
-        description: "Veuillez remplir tous les champs obligatoires.",
+        title: t('contact.notifications.missingFields'),
+        description: t('contact.notifications.missingFieldsDesc'),
         variant: "destructive"
       });
       return;
     }
 
-    // Utiliser Formspree pour l'envoi (remplacer YOUR_FORM_ID par votre ID Formspree)
-    const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xanyyzez'; // À remplacer par votre endpoint
-    
+    // Utiliser Formspree pour l'envoi
+    const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xanyyzez';
+
     try {
       const response = await fetch(FORMSPREE_ENDPOINT, {
         method: 'POST',
@@ -43,7 +45,7 @@ const ContactPage = () => {
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
-          subject: formData.subject || 'Contact depuis le site Vaonix',
+          subject: formData.subject || t('contact.notifications.defaultSubject'),
           message: formData.message,
           _replyto: formData.email
         })
@@ -51,10 +53,10 @@ const ContactPage = () => {
 
       if (response.ok) {
         toast({
-          title: "Message envoyé avec succès !",
-          description: "Nous vous répondrons dans les plus brefs délais."
+          title: t('contact.notifications.success'),
+          description: t('contact.notifications.successDesc')
         });
-        
+
         // Réinitialiser le formulaire
         setFormData({
           name: '',
@@ -68,8 +70,8 @@ const ContactPage = () => {
     } catch (error) {
       console.error('Erreur envoi formulaire:', error);
       toast({
-        title: "Erreur d'envoi",
-        description: "Une erreur est survenue. Veuillez réessayer ou nous contacter directement.",
+        title: t('contact.notifications.error'),
+        description: t('contact.notifications.errorDesc'),
         variant: "destructive"
       });
     }
@@ -85,22 +87,21 @@ const ContactPage = () => {
   return (
     <>
       <SEOHead
-        title="Contact — Vaonix"
-        description="Contactez notre équipe d'experts en modules optiques. Support technique prioritaire, stock européen, livraison rapide."
+        title={t('contact.title') + " — Vaonix"}
+        description={t('contact.subtitle')}
         keywords={['contact', 'support technique', 'vaonix', 'modules optiques']}
       />
-      
+
       <div className="min-h-screen flex flex-col">
         <Header />
-        
+
         <main className="flex-1 py-16">
           <div className="container mx-auto px-6">
             <div className="max-w-5xl mx-auto">
               <div className="text-center mb-12">
-                <h1 className="text-4xl md:text-5xl font-bold mb-4">Contactez-nous</h1>
+                <h1 className="text-4xl md:text-5xl font-bold mb-4">{t('contact.title')}</h1>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  Notre équipe d'experts est à votre disposition pour répondre à toutes vos questions 
-                  sur nos modules optiques et vous accompagner dans vos projets.
+                  {t('contact.subtitle')}
                 </p>
               </div>
 
@@ -108,30 +109,30 @@ const ContactPage = () => {
                 {/* Formulaire de contact */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Envoyer un message</CardTitle>
+                    <CardTitle>{t('contact.form.title')}</CardTitle>
                     <CardDescription>
-                      Remplissez le formulaire ci-dessous et nous vous répondrons rapidement.
+                      {t('contact.form.subtitle')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-4">
                       <div>
                         <label htmlFor="name" className="block text-sm font-medium mb-2">
-                          Nom complet *
+                          {t('contact.form.name')}
                         </label>
                         <Input
                           id="name"
                           name="name"
                           value={formData.name}
                           onChange={handleChange}
-                          placeholder="Jean Dupont"
+                          placeholder={t('contact.form.namePlaceholder')}
                           required
                         />
                       </div>
 
                       <div>
                         <label htmlFor="email" className="block text-sm font-medium mb-2">
-                          Email *
+                          {t('contact.form.email')}
                         </label>
                         <Input
                           id="email"
@@ -139,34 +140,34 @@ const ContactPage = () => {
                           type="email"
                           value={formData.email}
                           onChange={handleChange}
-                          placeholder="jean.dupont@entreprise.com"
+                          placeholder={t('contact.form.emailPlaceholder')}
                           required
                         />
                       </div>
 
                       <div>
                         <label htmlFor="subject" className="block text-sm font-medium mb-2">
-                          Sujet
+                          {t('contact.form.subject')}
                         </label>
                         <Input
                           id="subject"
                           name="subject"
                           value={formData.subject}
                           onChange={handleChange}
-                          placeholder="Question sur les modules SFP+"
+                          placeholder={t('contact.form.subjectPlaceholder')}
                         />
                       </div>
 
                       <div>
                         <label htmlFor="message" className="block text-sm font-medium mb-2">
-                          Message *
+                          {t('contact.form.message')}
                         </label>
                         <Textarea
                           id="message"
                           name="message"
                           value={formData.message}
                           onChange={handleChange}
-                          placeholder="Bonjour, je souhaiterais obtenir des informations sur..."
+                          placeholder={t('contact.form.messagePlaceholder')}
                           rows={6}
                           required
                         />
@@ -174,7 +175,7 @@ const ContactPage = () => {
 
                       <Button type="submit" className="w-full" size="lg">
                         <Send className="w-4 h-4 mr-2" />
-                        Envoyer le message
+                        {t('contact.form.send')}
                       </Button>
                     </form>
                   </CardContent>
@@ -184,9 +185,9 @@ const ContactPage = () => {
                 <div className="space-y-6">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Coordonnées</CardTitle>
+                      <CardTitle>{t('contact.details.title')}</CardTitle>
                       <CardDescription>
-                        Vous pouvez également nous contacter directement
+                        {t('contact.details.subtitle')}
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -194,7 +195,7 @@ const ContactPage = () => {
                         <Mail className="w-5 h-5 text-primary mt-0.5" />
                         <div>
                           <p className="font-medium">Email</p>
-                          <a 
+                          <a
                             href={`mailto:${siteConfig.contact.email}`}
                             className="text-muted-foreground hover:text-primary transition-colors"
                           >
@@ -206,15 +207,15 @@ const ContactPage = () => {
                       <div className="flex items-start space-x-3">
                         <Phone className="w-5 h-5 text-primary mt-0.5" />
                         <div>
-                          <p className="font-medium">Téléphone</p>
-                          <a 
+                          <p className="font-medium">{t('contact.details.phone')}</p>
+                          <a
                             href={`tel:${siteConfig.contact.phone}`}
                             className="text-muted-foreground hover:text-primary transition-colors"
                           >
                             {siteConfig.contact.phone}
                           </a>
                           <p className="text-sm text-muted-foreground mt-1">
-                            Lundi - Vendredi : 9h - 18h
+                            {t('contact.details.hours')}
                           </p>
                         </div>
                       </div>
@@ -222,7 +223,7 @@ const ContactPage = () => {
                       <div className="flex items-start space-x-3">
                         <MapPin className="w-5 h-5 text-primary mt-0.5" />
                         <div>
-                          <p className="font-medium">Adresse</p>
+                          <p className="font-medium">{t('contact.details.address')}</p>
                           <p className="text-muted-foreground">
                             {siteConfig.contact.address}
                           </p>
@@ -233,18 +234,16 @@ const ContactPage = () => {
 
                   <Card>
                     <CardHeader>
-                      <CardTitle>Support technique</CardTitle>
+                      <CardTitle>{t('contact.support.title')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-muted-foreground mb-4">
-                        Notre équipe d'experts vous accompagne dans le choix et l'installation 
-                        de vos modules optiques.
+                        {t('contact.support.description')}
                       </p>
                       <ul className="space-y-2 text-sm text-muted-foreground">
-                        <li>✓ Compatibilité multi-constructeurs</li>
-                        <li>✓ Aide au choix de modules</li>
-                        <li>✓ Support technique prioritaire</li>
-                        <li>✓ Stock européen disponible</li>
+                        {(t('contact.support.features') as any).map((feature: string, index: number) => (
+                          <li key={index}>✓ {feature}</li>
+                        ))}
                       </ul>
                     </CardContent>
                   </Card>
