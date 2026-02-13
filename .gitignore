@@ -147,3 +147,15 @@ public/sitemap.xml
 *.njsproj
 *.sln
 *.sw?
+# --- Vite Specific ---
+.vite/
+dist/
+
+# --- Cypress / Playwright (Si tu fais des tests plus tard) ---
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# --- Vercel (Si tu déploies chez eux) ---
+.vercel/

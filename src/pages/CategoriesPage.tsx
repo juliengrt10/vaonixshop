@@ -9,7 +9,7 @@ import { ArrowRight, ChevronRight, Zap, ShieldCheck } from "lucide-react";
 export default function CategoriesPage() {
   const { t } = useLanguage();
 
-  // Structure avec 2 colonnes (La 3ème colonne "High Speed" est supprimée)
+  // Structure à 2 colonnes (SFP et QSFP)
   const NAV_COLUMNS = [
     {
       title: "SFP / SFP+ / SFP28",
@@ -17,7 +17,7 @@ export default function CategoriesPage() {
         { label: "SFP28 (25G)", to: "/produits/liste?ff=SFP28", desc: "Short/Long range (SR/LR)" },
         { label: "SFP+ (10G)", to: "/produits/liste?ff=SFP%2B", desc: "Dual Fiber / Bidi / Copper" },
         { label: "SFP (1.25G)", to: "/produits/liste?ff=SFP", desc: "Multimode & Singlemode" },
-        { label: "Specialized WDM", to: "/produits/liste?tech=WDM", desc: "CWDM / DWDM Tunable" },
+        { label: "xWDM", to: "/produits/liste?tech=WDM", desc: "CWDM / DWDM / Tunable" },
       ],
     },
     {
@@ -34,14 +34,14 @@ export default function CategoriesPage() {
   return (
     <>
       <Helmet>
-        <title>Navigation Technique | Vaonix</title>
+        <title>Catégories | Vaonix</title>
       </Helmet>
 
       <div className="min-h-screen flex flex-col bg-white">
         <Header />
 
         <main className="flex-1">
-          {/* Hero Section */}
+          {/* Hero Section - Titre plus propre */}
           <section className="bg-slate-50 border-b border-slate-200 py-16">
             <div className="container mx-auto max-w-7xl px-6">
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
@@ -49,17 +49,18 @@ export default function CategoriesPage() {
                   <Zap className="w-5 h-5 fill-brand" />
                   <span className="uppercase tracking-[0.2em] text-xs">Infrastructure Réseau</span>
                 </div>
+                {/* Nouveau titre simplifié */}
                 <h1 className="text-4xl font-bold text-slate-900 mb-4">
-                  Sélecteur de Modules Universels
+                  Catégories
                 </h1>
                 <p className="text-lg text-slate-500 max-w-2xl">
-                  Accédez directement aux spécifications techniques par format de châssis.
+                  Sélectionnez votre type de module pour accéder aux références compatibles.
                 </p>
               </motion.div>
             </div>
           </section>
 
-          {/* Grille Technique à 2 colonnes */}
+          {/* Grille de Navigation */}
           <section className="py-20">
             <div className="container mx-auto max-w-7xl px-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-24 gap-y-12">
@@ -100,18 +101,17 @@ export default function CategoriesPage() {
                 ))}
               </div>
 
-              {/* BARRE DE RÉASSURANCE TECHNIQUE (Restaurée) */}
+              {/* Barre de réassurance technique et bouton catalogue */}
               <div className="mt-24 p-8 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
                     <ShieldCheck className="w-6 h-6 text-green-600" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-slate-900">Compatibilité Multi-Constructeurs</h4>
-                    <p className="text-sm text-slate-500 italic">EEPROM codée sur mesure pour Cisco, Arista, Juniper, Dell...</p>
+                    <h4 className="font-bold text-slate-900">Compatibilité Universelle</h4>
+                    <p className="text-sm text-slate-500 italic">Codage EEPROM sur mesure pour plus de 50 constructeurs.</p>
                   </div>
                 </div>
-                {/* BOUTON CATALOGUE COMPLET (Maintenu) */}
                 <Link
                   to="/produits/liste"
                   className="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-3 hover:bg-brand transition-all"

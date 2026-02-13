@@ -18,7 +18,6 @@ const Footer = () => {
     legal: [
       { name: language === 'fr' ? "CGV" : "T&C", to: "/cgv" },
       { name: language === 'fr' ? "Mentions légales" : "Legal Notice", to: "/mentions-legales" },
-      { name: language === 'fr' ? "Livraison & retours" : "Delivery & Returns", to: "/livraison-retours" },
       { name: t('nav.contact'), to: "/contact" },
     ],
   };

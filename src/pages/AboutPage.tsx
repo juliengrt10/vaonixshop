@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { Header } from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,29 +8,13 @@ import { motion } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function AboutPage() {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
 
   const values = [
-    {
-      icon: Target,
-      title: t('about.values.excellence.title'),
-      description: t('about.values.excellence.description')
-    },
-    {
-      icon: Shield,
-      title: t('about.values.reliability.title'),
-      description: t('about.values.reliability.description')
-    },
-    {
-      icon: Zap,
-      title: t('about.values.responsiveness.title'),
-      description: t('about.values.responsiveness.description')
-    },
-    {
-      icon: Globe,
-      title: t('about.values.compatibility.title'),
-      description: t('about.values.compatibility.description')
-    }
+    { icon: Target, title: t('about.values.excellence.title'), description: t('about.values.excellence.description') },
+    { icon: Shield, title: t('about.values.reliability.title'), description: t('about.values.reliability.description') },
+    { icon: Zap, title: t('about.values.responsiveness.title'), description: t('about.values.responsiveness.description') },
+    { icon: Globe, title: t('about.values.compatibility.title'), description: t('about.values.compatibility.description') }
   ];
 
   const stats = [
@@ -41,262 +26,106 @@ export default function AboutPage() {
 
   return (
     <>
+      <Helmet><title>{t('about.title')} | Vaonix</title></Helmet>
       <Header />
 
-      <main className="pt-16">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-br from-brand-50 to-white py-16">
-          <div className="container mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-center max-w-4xl mx-auto"
-            >
-              <h1 className="text-4xl lg:text-5xl font-heading font-bold text-foreground mb-6">
-                {t('about.title')}
-              </h1>
-              <p className="text-xl text-muted-foreground leading-relaxed">
-                {t('about.subtitle')}
-              </p>
+      <main className="flex-1 bg-white">
+        {/* --- Hero Section --- */}
+        <section className="bg-white border-b border-slate-100 py-20">
+          <div className="container mx-auto px-6 text-center">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl mx-auto">
+              <Badge variant="outline" className="mb-6 border-slate-300 text-slate-500 font-bold uppercase tracking-widest text-[10px]">
+                {t('about.story.founded')} 2018
+              </Badge>
+              <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 uppercase tracking-tight">{t('about.title')}</h1>
+              <p className="text-lg text-slate-600 leading-relaxed font-medium">{t('about.subtitle')}</p>
             </motion.div>
           </div>
         </section>
 
-        {/* Stats Section */}
-        <section className="py-16 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-              {stats.map((stat, index) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="text-center"
-                >
-                  <div className="text-4xl lg:text-5xl font-bold text-brand mb-2">
-                    {stat.number}
-                  </div>
-                  <div className="text-muted-foreground">
-                    {stat.label}
-                  </div>
-                </motion.div>
+        {/* --- Stats Section --- */}
+        <section className="py-12 bg-slate-50 border-b border-slate-100">
+          <div className="container mx-auto px-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+              {stats.map((stat, i) => (
+                <div key={i} className="flex flex-col">
+                  <span className="text-3xl font-black text-slate-900">{stat.number}</span>
+                  <span className="text-xs uppercase tracking-wider font-bold text-slate-500 mt-2">{stat.label}</span>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Story Section */}
-        <section className="py-16 bg-muted-bg/30">
-          <div className="container mx-auto px-4">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
-              >
-                <h2 className="text-3xl font-heading font-bold text-foreground mb-6">
-                  {t('about.story.title')}
-                </h2>
-                <div className="prose prose-lg text-muted-foreground space-y-4">
-                  <p>{t('about.story.p1')}</p>
-                  <p>{t('about.story.p2')}</p>
-                  <ul className="list-disc pl-4 space-y-1">
-                    <li>{t('about.story.bullet1')}</li>
-                    <li>{t('about.story.bullet2')}</li>
-                  </ul>
-                  <p>{t('about.story.p3')}</p>
-                  <p>{t('about.story.p4')}</p>
-                  <p>{t('about.story.p5')}</p>
-                  <p className="font-semibold">{t('about.story.p6')}</p>
-                  <p>{t('about.story.p7')}</p>
-                  <p>{t('about.story.p8')}</p>
-                </div>
-              </motion.div>
+        {/* --- Story Section (Simplifiée : juste le texte) --- */}
+        <section className="py-24">
+          <div className="container mx-auto px-6">
+            <div className="max-w-4xl mx-auto space-y-8">
+              <h2 className="text-3xl font-bold text-slate-900 uppercase tracking-tight text-center">
+                {t('about.story.title')}
+              </h2>
 
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="relative"
-              >
-                <div className="aspect-video bg-gradient-to-br from-brand-50 to-white rounded-2xl overflow-hidden">
-                  <img
-                    src="/images/about/vaonix-team.jpg"
-                    alt="Équipe Vaonix au travail"
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="absolute -bottom-4 -right-4 bg-white p-6 rounded-xl shadow-lg border border-border">
-                  <div className="text-2xl font-bold text-brand">2018</div>
-                  <div className="text-sm text-muted-foreground">{t('about.story.founded')}</div>
-                </div>
-              </motion.div>
+              <div className="space-y-6 text-slate-600 leading-relaxed text-base md:text-lg">
+                <p className="font-medium text-slate-900">{t('about.story.p1')}</p>
+                <p>{t('about.story.p2')}</p>
+                <ul className="bg-slate-50 p-6 rounded-xl space-y-3 font-bold text-slate-900 text-sm border border-slate-100">
+                  <li className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-brand rounded-full" /> {t('about.story.bullet1')}
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-brand rounded-full" /> {t('about.story.bullet2')}
+                  </li>
+                </ul>
+                <p>{t('about.story.p3')}</p>
+                <p>{t('about.story.p4')}</p>
+                <p>{t('about.story.p5')}</p>
+                <p className="font-bold text-slate-900 pt-6 border-t border-slate-100">{t('about.story.p6')}</p>
+                <p>{t('about.story.p7')}</p>
+                <p>{t('about.story.p8')}</p>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Values Section */}
-        <section className="py-16 bg-white">
-          <div className="container mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-center mb-12"
-            >
-              <h2 className="text-3xl font-heading font-bold text-foreground mb-4">
-                {t('about.values.title')}
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                {t('about.values.subtitle')}
-              </p>
-            </motion.div>
+        {/* --- Values Section --- */}
+        <section className="py-24 bg-slate-50 border-y border-slate-100">
+          <div className="container mx-auto px-6">
+            <div className="mb-16 text-center">
+              <h2 className="text-3xl font-bold text-slate-900 uppercase tracking-tight mb-4">{t('about.values.title')}</h2>
+              <p className="text-slate-500 font-bold uppercase text-xs tracking-widest">{t('about.values.subtitle')}</p>
+            </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               {values.map((value, index) => (
-                <motion.div
-                  key={value.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                >
-                  <Card className="h-full text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                    <CardContent className="p-6">
-                      <div className="w-12 h-12 bg-brand-50 rounded-xl flex items-center justify-center mx-auto mb-4">
-                        <value.icon className="w-6 h-6 text-brand" />
-                      </div>
-                      <h3 className="font-semibold text-foreground mb-2">
-                        {value.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        {value.description}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                <Card key={index} className="border-none shadow-sm bg-white">
+                  <CardContent className="p-8 text-center">
+                    <div className="text-brand mb-6 flex justify-center">
+                      <value.icon className="w-8 h-8" />
+                    </div>
+                    <h3 className="font-bold text-slate-900 mb-3 uppercase text-sm tracking-tight">{value.title}</h3>
+                    <p className="text-sm text-slate-500 leading-relaxed">{value.description}</p>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Team Section */}
-        <section className="py-16 bg-muted-bg/30">
-          <div className="container mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-center mb-12"
-            >
-              <h2 className="text-3xl font-heading font-bold text-foreground mb-4">
-                {t('about.team.title')}
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                {t('about.team.subtitle')}
-              </p>
-            </motion.div>
-
-            <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-              >
-                <Card>
-                  <CardContent className="p-6 text-center">
-                    <div className="w-20 h-20 bg-gradient-to-br from-brand-50 to-brand-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-                      <Users className="w-10 h-10 text-brand" />
-                    </div>
-                    <h3 className="font-semibold text-foreground mb-2">
-                      {t('about.team.sales.title')}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      {t('about.team.sales.description')}
-                    </p>
-
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-              >
-                <Card>
-                  <CardContent className="p-6 text-center">
-                    <div className="w-20 h-20 bg-gradient-to-br from-brand-50 to-brand-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-                      <Award className="w-10 h-10 text-brand" />
-                    </div>
-                    <h3 className="font-semibold text-foreground mb-2">
-                      {t('about.team.support.title')}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      {t('about.team.support.description')}
-                    </p>
-
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                <Card>
-                  <CardContent className="p-6 text-center">
-                    <div className="w-20 h-20 bg-gradient-to-br from-brand-50 to-brand-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-                      <Shield className="w-10 h-10 text-brand" />
-                    </div>
-                    <h3 className="font-semibold text-foreground mb-2">
-                      {t('about.team.quality.title')}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      {t('about.team.quality.description')}
-                    </p>
-
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </div>
-          </div>
-        </section>
-
-        {/* Certifications Section */}
-        <section className="py-16 bg-white">
-          <div className="container mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-center mb-12"
-            >
-              <h2 className="text-3xl font-heading font-bold text-foreground mb-4">
-                {t('about.certifications.title')}
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                {t('about.certifications.subtitle')}
-              </p>
-            </motion.div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto">
-              {['CE', 'RoHS', 'FCC', 'ISO 9001'].map((cert, index) => (
-                <motion.div
-                  key={cert}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="text-center"
-                >
-                  <div className="w-16 h-16 bg-muted rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <Award className="w-8 h-8 text-brand" />
-                  </div>
-                  <div className="font-semibold text-foreground">{cert}</div>
-                </motion.div>
+        {/* --- Team Section --- */}
+        <section className="py-24">
+          <div className="container mx-auto px-6 text-center">
+            <h2 className="text-3xl font-bold text-slate-900 uppercase tracking-tight mb-16">{t('about.team.title')}</h2>
+            <div className="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+              {[
+                { icon: Users, key: 'sales' },
+                { icon: Award, key: 'support' },
+                { icon: Shield, key: 'quality' }
+              ].map((group, index) => (
+                <div key={index} className="flex flex-col items-center p-6 rounded-2xl border border-slate-100 bg-slate-50">
+                  <group.icon className="w-8 h-8 mb-4 text-slate-400" />
+                  <h3 className="font-bold text-slate-900 mb-2 uppercase text-sm">{t(`about.team.${group.key}.title`)}</h3>
+                  <p className="text-xs text-slate-500 italic">{t(`about.team.${group.key}.description`)}</p>
+                </div>
               ))}
             </div>
           </div>

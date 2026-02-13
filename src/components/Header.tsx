@@ -47,7 +47,6 @@ export const Header = () => {
   const navItems = [
     { label: t('nav.products'), href: "/products", isRoute: true },
     { label: t('nav.about'), href: "/a-propos", isRoute: true },
-    { label: t('nav.resources'), href: "/ressources", isRoute: true },
     // Contact pointe désormais vers la page /contact
     { label: t('nav.contact'), href: "/contact", isRoute: true },
   ];
