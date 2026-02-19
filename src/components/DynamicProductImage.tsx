@@ -65,6 +65,8 @@ export function DynamicProductImage({ product, className, showLabel = true, prio
         else if (titleLower.includes('lr')) application = "LR";
         else if (titleLower.includes('re')) application = "RE";
         else if (titleLower.includes('sr')) application = "SR";
+        else if (titleLower.includes('dac')) application = "DAC";
+        else if (titleLower.includes('aoc')) application = "AOC";
 
         return (
             <div style={{
@@ -134,37 +136,106 @@ export function DynamicProductImage({ product, className, showLabel = true, prio
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontWeight: 'bold',
-                    fontSize: '14px',
-                    writingMode: 'vertical-rl',
-                    color: '#5D2B7B',
-                    borderLeft: '1px solid #eee'
+                    borderLeft: '1px solid #eee',
+                    padding: '4px'
                 }}>
-                    VAONIX
+                    <img
+                        src="/images/vaonix-logo-transparent.png"
+                        alt="Vaonix"
+                        style={{
+                            width: '100%',
+                            height: 'auto',
+                            transform: 'rotate(90deg)',
+                            opacity: 0.8,
+                            filter: 'brightness(0.7)'
+                        }}
+                    />
                 </div>
             </div>
         );
     };
+
+    const renderLogoOnly = () => (
+        <div style={{
+            width: '300px',
+            height: '100px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'transparent'
+        }}>
+            <img
+                src="/images/vaonix-logo-transparent.png"
+                alt="Vaonix"
+                style={{
+                    width: '80%',
+                    height: 'auto',
+                    objectFit: 'contain',
+                    opacity: 0.9,
+                    filter: 'brightness(0.8) contrast(1.2)' // To make it pop on white labels
+                }}
+            />
+        </div>
+    );
 
     // Determine base image based on form factor
     const config = useMemo(() => {
         const titleLower = product.title.toLowerCase();
         const isCable = titleLower.includes('cable') || titleLower.includes('dac') || titleLower.includes('aoc');
         const isQSFPDD = titleLower.includes('qsfp-dd') || titleLower.includes('qsfp56-dd');
-        const isQSFP = titleLower.includes('qsfp') && !isQSFPDD;
+        const isQSFP = (titleLower.includes('qsfp') && !isQSFPDD) || titleLower.includes('40g') || titleLower.includes('100g');
 
         if (isCable) {
-            // ... existing logic ...
-            if (isQSFP || isQSFPDD) {
-                return { image: '/images/products/dac-qsfp-full-base.png' };
-            } else {
-                return { image: '/images/products/dac-sfp-full-base.png' };
-            }
+            const labels = isQSFP || isQSFPDD ? [
+                // QSFP DAC Labels
+                {
+                    corners: [
+                        { x: 17.5, y: 67.8 },
+                        { x: 33.3, y: 62.7 },
+                        { x: 36.5, y: 69.7 },
+                        { x: 19.9, y: 75.0 }
+                    ],
+                    renderContent: renderLogoOnly
+                },
+                {
+                    corners: [
+                        { x: 67.9, y: 61.6 },
+                        { x: 83.1, y: 65.4 },
+                        { x: 80.4, y: 71.6 },
+                        { x: 65.3, y: 67.8 }
+                    ],
+                    renderContent: renderLogoOnly
+                }
+            ] : [
+                // SFP DAC Labels
+                {
+                    corners: [
+                        { x: 42.0, y: 64.1 },
+                        { x: 52.5, y: 69.7 },
+                        { x: 49.4, y: 72.6 },
+                        { x: 38.3, y: 67.4 }
+                    ],
+                    renderContent: renderLogoOnly
+                },
+                {
+                    corners: [
+                        { x: 81.3, y: 40.0 },
+                        { x: 89.2, y: 46.6 },
+                        { x: 84.9, y: 48.7 },
+                        { x: 77.3, y: 42.2 }
+                    ],
+                    renderContent: renderLogoOnly
+                }
+            ];
+
+            return {
+                image: isQSFP || isQSFPDD ? '/images/products/dac-qsfp-full-base.png' : '/images/products/dac-sfp-full-base.png',
+                labels
+            };
         } else if (isQSFPDD || isQSFP) {
             // QSFP / QSFP-DD / QSFP28
             return {
                 image: '/images/products/qsfp-base-purple.png',
-                // QSFP label positioning - FINAL CORNERS
                 corners: [
                     { x: 46.1, y: 37.8 },
                     { x: 70.5, y: 19.3 },
@@ -177,7 +248,6 @@ export function DynamicProductImage({ product, className, showLabel = true, prio
             // Default to SFP
             return {
                 image: '/images/products/sfp-base.png',
-                // SFP label positioning - FINAL CORNERS
                 corners: [
                     { x: 46.0, y: 39.8 },
                     { x: 75.8, y: 21.5 },
@@ -187,45 +257,45 @@ export function DynamicProductImage({ product, className, showLabel = true, prio
                 renderContent: renderLabelContent
             };
         }
-    }, [product.title]);
+    }, [product.title, renderLabelContent, renderLogoOnly]);
 
-    // Calculate matrix at runtime based on current container size
-    const activeLabelStyle = useMemo(() => {
-        // @ts-ignore - corners is a dynamic property
-        if (!config.corners || containerSize.width === 0) {
-            return {};
-        }
+    // Calculate matrices for all labels
+    const activeLabels = useMemo(() => {
+        if (containerSize.width === 0) return [];
 
-        const src: [Point, Point, Point, Point] = [
-            { x: 0, y: 0 },
-            { x: 300, y: 0 },
-            { x: 300, y: 100 },
-            { x: 0, y: 100 }
-        ];
         // @ts-ignore
-        const dst: [Point, Point, Point, Point] = config.corners.map((p: any) => ({
-            x: (p.x / 100) * containerSize.width,
-            y: (p.y / 100) * containerSize.height
-        })) as [Point, Point, Point, Point];
+        const labelsConfigs = config.labels || (config.corners ? [{ corners: config.corners, renderContent: config.renderContent }] : []);
 
-        const matrix = getPerspectiveTransform(src, dst);
+        return labelsConfigs.map((label: any) => {
+            const src: [Point, Point, Point, Point] = [
+                { x: 0, y: 0 },
+                { x: 300, y: 0 },
+                { x: 300, y: 100 },
+                { x: 0, y: 100 }
+            ];
+            const dst: [Point, Point, Point, Point] = label.corners.map((p: any) => ({
+                x: (p.x / 100) * containerSize.width,
+                y: (p.y / 100) * containerSize.height
+            })) as [Point, Point, Point, Point];
 
-        return {
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '300px',
-            height: '100px',
-            transformOrigin: '0 0',
-            transform: matrix,
-            pointerEvents: 'none',
-            zIndex: 20
-        };
-    }, [config, containerSize]);
+            const matrix = getPerspectiveTransform(src, dst);
 
-
-
-    // ... existing config useMemo ...
+            return {
+                style: {
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '300px',
+                    height: '100px',
+                    transformOrigin: '0 0',
+                    transform: matrix,
+                    pointerEvents: 'none',
+                    zIndex: 20
+                },
+                content: label.renderContent || renderLabelContent
+            };
+        });
+    }, [config, containerSize, renderLabelContent]);
 
     return (
         <div
@@ -241,22 +311,16 @@ export function DynamicProductImage({ product, className, showLabel = true, prio
                 fetchPriority={priority ? "high" : "auto"}
                 className="w-full h-full object-contain relative z-10"
             />
-            {/* Label Overlay */}
-            {activeLabelStyle && showLabel && (
+            {/* Label Overlays */}
+            {showLabel && activeLabels.map((label: any, idx: number) => (
                 <div
+                    key={idx}
                     className="absolute z-20 pointer-events-none"
-                    style={activeLabelStyle as React.CSSProperties}
+                    style={label.style as React.CSSProperties}
                 >
-                    {/* @ts-ignore - renderContent is a custom property */}
-                    {config.renderContent ? config.renderContent() : (
-                        <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-white">
-                            LABEL
-                        </div>
-                    )}
+                    {label.content()}
                 </div>
-            )}
-
-
+            ))}
         </div>
     );
 }

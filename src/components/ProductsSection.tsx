@@ -9,9 +9,13 @@ import { DynamicProductImage } from "@/components/DynamicProductImage";
 
 const ProductsSection = () => {
   const { t } = useLanguage();
-
+  // Hook pour récupérer les produits de différentes collections Shopify
   const { products: shopifySfpProducts, loading: sfpLoading } = useShopifyProducts({
     collection: siteConfig.shopify.collections.sfp,
+    first: 2
+  });
+  const { products: shopifySfpPlusProducts, loading: sfpPlusLoading } = useShopifyProducts({
+    collection: siteConfig.shopify.collections.sfpPlus,
     first: 2
   });
   const { products: shopifyQsfpProducts, loading: qsfpLoading } = useShopifyProducts({
@@ -23,9 +27,9 @@ const ProductsSection = () => {
     first: 2
   });
 
-  const { isEnabled } = useCart();
+  const { addToCart, isEnabled } = useCart();
 
-  // Liste mise à jour : OSFP supprimé
+  // Structure des produits avec images Vaonix réelles
   const productCategories = [
     {
       title: "Modules SFP / SFP+",
@@ -68,6 +72,16 @@ const ProductsSection = () => {
       collection: siteConfig.shopify.collections.qsfpDd
     },
     {
+      title: "Modules OSFP",
+      description: t('home.featuredProducts.categories.osfp'),
+      icon: Layers,
+      specs: ["400G/800G/1.6T", "InfiniBand/Ethernet", "High density"],
+      image: "/images/products/vaonix-qsfp28.png",
+      shopifyProducts: [],
+      loading: false,
+      collection: "osfp"
+    },
+    {
       title: t('home.featuredProducts.categories.cables.title'),
       description: t('home.featuredProducts.categories.cables.description'),
       icon: Cable,
@@ -98,14 +112,28 @@ const ProductsSection = () => {
               className="product-card vaonix-card rounded-2xl overflow-hidden scroll-reveal group"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="relative overflow-hidden bg-white flex items-center justify-center">
-                <img
-                  src={category.image}
-                  alt={category.title}
-                  className="w-full h-48 object-contain p-4 group-hover:scale-110 transition-transform duration-500"
-                />
+              <div className="h-48 overflow-hidden bg-white flex items-center justify-center relative">
+                {category.collection === 'cables' ? (
+                  <DynamicProductImage
+                    product={{
+                      title: category.title,
+                      handle: 'dac-cable',
+                      specs: { speed: '100G', formFactor: 'QSFP28' }
+                    }}
+                    className="h-full w-auto aspect-square bg-transparent rounded-none"
+                  />
+                ) : (
+                  <img
+                    src={category.image}
+                    alt={category.title}
+                    className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500"
+                  />
+                )}
+
+                {/* Brand tech overlay (violet touch) */}
                 <div className="absolute inset-0 bg-primary/5 pointer-events-none group-hover:bg-transparent transition-colors duration-500" />
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/10 to-transparent pointer-events-none" />
+
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="absolute bottom-4 left-4 right-4">
                     <div className="space-y-1">
@@ -124,6 +152,7 @@ const ProductsSection = () => {
                 </div>
                 <p className="text-muted-foreground mb-4">{category.description}</p>
 
+                {/* Affichage des produits Shopify si disponibles */}
                 {isEnabled && category.shopifyProducts.length > 0 && (
                   <div className="mb-4 space-y-2">
                     {category.shopifyProducts.slice(0, 2).map((product) => (

@@ -25,7 +25,7 @@ const MentionsLegalesPage = lazy(() => import("./pages/legal/MentionsLegalesPage
 const CgvPage = lazy(() => import("./pages/legal/CgvPage"));
 const LivraisonRetoursPage = lazy(() => import("./pages/legal/LivraisonRetoursPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
-const ImageCapture = lazy(() => import("./pages/temp/ImageCapture"));
+// const ImageCapture = lazy(() => import("./pages/temp/ImageCapture"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -67,7 +67,7 @@ const App = () => (
                 <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
                 <Route path="/cgv" element={<CgvPage />} />
                 <Route path="/livraison-retours" element={<LivraisonRetoursPage />} />
-                <Route path="/temp/images" element={<ImageCapture />} />
+                {/* Custom routes area */}
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
